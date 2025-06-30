@@ -7,6 +7,6 @@ export default registerAs('database', () => ({
   database: process.env.DB_NAME,
   options: {
     encrypt: true,
-    trustServerCertificate: process.env.ENV === 'dev' // solo true para dev
+    trustServerCertificate: process.env.ENV === 'dev'
   }
 }))

@@ -1,1 +1,9 @@
-GET http://localhost:3000/individuals
+POST http://localhost:3000/api/individuals/validate
+Content-Type: application/json
+
+{
+  "folioOrden": "CDI721953VDW",
+  "codigo": 1505,
+  "idEstadoNacimiento": 9,
+  "fechaNacimiento": "1997-10-24"
+}
