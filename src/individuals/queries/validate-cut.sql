@@ -4,7 +4,8 @@ SELECT
 	pf.fechaNacimiento,
 	pf.idEntidadFederativaNacimiento,
 	vsd.codigo, 
-	sm.folioOrden
+	sm.folioOrden,
+	sm.idSolicitudDom
 FROM dbo.validacionSolicitudDom vsd WITH (NOLOCK)
 LEFT JOIN dbo.solicitudDomiciliacion sm WITH (NOLOCK) ON sm.idSolicitudDom = vsd.idSolicitudDom
 LEFT JOIN dbo.orden o WITH (NOLOCK) ON o.folioInterno = sm.folioOrden
