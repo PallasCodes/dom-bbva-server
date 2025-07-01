@@ -12,6 +12,7 @@ export class IndividualsService {
   private readonly validateCut: string
   private readonly getIndividualInfo: string
   private readonly getBankInfo: string
+  private readonly getLoanInfoQuery: string
 
   constructor(
     private readonly sqlService: SqlService,
@@ -27,6 +28,10 @@ export class IndividualsService {
     )
     this.getBankInfo = fs.readFileSync(
       path.join(__dirname, 'queries', 'get-bank-info.sql'),
+      'utf8'
+    )
+    this.getLoanInfoQuery = fs.readFileSync(
+      path.join(__dirname, 'queries', 'get-loan-info.sql'),
       'utf8'
     )
   }
@@ -57,5 +62,11 @@ export class IndividualsService {
     })
 
     return individualInfo
+  }
+
+  async getLoanInfo(folioOrden: string) {
+    const [loanInfo] = await this.sqlService.query(this.getLoanInfoQuery, { folioOrden })
+
+    return loanInfo
   }
 }
