@@ -7,3 +7,9 @@ Content-Type: application/json
   "idEstadoNacimiento": 9,
   "fechaNacimiento": "1997-10-24"
 }
+
+###
+GET http://localhost:3000/api/individuals/CDI721953VDW
+
+###
+GET http://localhost:3000/api/individuals/bank/CDI721953VDW

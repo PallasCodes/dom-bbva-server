@@ -11,6 +11,7 @@ import { DirectDebitsService } from 'src/direct-debits/direct-debits.service'
 export class IndividualsService {
   private readonly validateCut: string
   private readonly getIndividualInfo: string
+  private readonly getBankInfo: string
 
   constructor(
     private readonly sqlService: SqlService,
@@ -22,6 +23,10 @@ export class IndividualsService {
     )
     this.getIndividualInfo = fs.readFileSync(
       path.join(__dirname, 'queries', 'get-individual-info.sql'),
+      'utf8'
+    )
+    this.getBankInfo = fs.readFileSync(
+      path.join(__dirname, 'queries', 'get-bank-info.sql'),
       'utf8'
     )
   }
@@ -49,7 +54,15 @@ export class IndividualsService {
   }
 
   async getIndividual(folioOrden: string) {
-    const individualInfo = await this.sqlService.query(this.getIndividualInfo, {
+    const [individualInfo] = await this.sqlService.query(this.getIndividualInfo, {
+      folioOrden
+    })
+
+    return individualInfo
+  }
+
+  async getBank(folioOrden: string) {
+    const individualInfo = await this.sqlService.query(this.getBankInfo, {
       folioOrden
     })
 

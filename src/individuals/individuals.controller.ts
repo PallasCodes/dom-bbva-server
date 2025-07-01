@@ -16,4 +16,9 @@ export class IndividualsController {
   getIndividualInfo(@Param('folioOrden') folioOrden: string) {
     return this.individualsService.getIndividual(folioOrden)
   }
+
+  @Get('bank/:folioOrden')
+  getBankInfo(@Param('folioOrden') folioOrden: string) {
+    return this.individualsService.getBank(folioOrden)
+  }
 }
