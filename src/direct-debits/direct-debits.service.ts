@@ -15,11 +15,12 @@ export class DirectDebitsService {
     )
   }
 
-  async updateStep(step: number, idSolicitudDom: number) {
-    const result = await this.sqlService.query(this.updateProcessStep, {
+  updateStep(step: number, idSolicitudDom: number) {
+    this.sqlService.query(this.updateProcessStep, {
       step,
       idSolicitudDom
     })
-    console.log('🚀 ~ DirectDebitsService ~ updateStep ~ result:', result)
   }
+
+  async getLoanInfo(folioOrden: string) {}
 }

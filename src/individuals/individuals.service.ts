@@ -31,18 +31,8 @@ export class IndividualsService {
     )
   }
 
-  async validateIndividual({
-    folioOrden,
-    codigo,
-    idEstadoNacimiento,
-    fechaNacimiento
-  }: ValidateCodeDto) {
-    const validData = await this.sqlService.query(this.validateCut, {
-      folioOrden,
-      codigo,
-      idEstadoNacimiento,
-      fechaNacimiento
-    })
+  async validateIndividual(dto: ValidateCodeDto) {
+    const validData = await this.sqlService.query(this.validateCut, dto)
 
     if (!validData.length) {
       throw new UnauthorizedException('Folio o código CUT incorrecto')
