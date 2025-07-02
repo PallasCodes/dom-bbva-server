@@ -10,32 +10,32 @@ POST http://localhost:3000/api/direct-debits/toku-webhook
 Content-Type: application/json
 
 {
-    "id": "wheve_SBcrf6oxKLwP39m5shEPe1vJqTcun9Do",
+    "id": "wheve_7o4m3BaSjuHOwPh2bjuMO-SZaj_UN3Ib",
     "event_type": "bank_account_verification.result",
     "bank_account_verification": {
-        "id_bank_account_verification": "bav_8WlQXdohrRW9PJ07B6rmD6Tu3tNhD9vq",
+        "id_bank_account_verification": "bav_Al_VZjWMvEGdSJc7xqtxmJlP9NPj_yzT",
         "status": "DONE",
-        "validation": "FAILED",
+        "validation": "SUCCESS",
         "reason": null,
         "voucher_url": {
-            "pdf": "https://api-storage.trytoku.com/v1/streaming/mnYklaNatSmIAUl66TBUbQfdfCS7o1IA6dj-Byqu0YBQ58U4yi0X5zyTHm6htgPNUh_aujPbUgLV2S-tiCHZA8ATCHXCcf_617xyFOIcZ9-RUEPDrX7K0C70KxzoEI7kjdAamBMc0IcB5Evtdc6rZdzS4cJitoTSM9p2W0mH3awmAssekYvyaq2P_V-eGOICVLReyUXXcX4CvrSQ909fWwQJMY3zsxLZOf4LCXq9R5MNbyVSZgK9o2gGcsB9xFP9R6hSqX_h3jwWGOBEG6xctA0RpuEi7LMISCSMptDIhsL3a5GgUiHQipD4l3Sc9F-2gpsJ-D85d53V-uQqGTY30tVlQ2nAOkacy4yBOlXPVqN3dWWtcqMsnxUrR-evXCZhF9IWHNyy85EJB_zC2Az1OzBKF_oellR1fiqADn_ixr9V7yFoXnXFhS7eka9SKZDRZ-FD0o19jYLS1RyQdqz_0_b7srCVLnph_GO0a01N8QVbobxaaiX7YdJBn687HgExd8JhCrnUFRv82pXnYqETQ1KIDFjgAT-y1SujpjwI_MySLPorVQ-Nt0rbW-xoaKIRWZEfenajI-DeA1Bq2gO-5SekBRvQx-gkTWfDVIFNA6eG_yG4pAv712KIdSKR62qsLkMwyz8Ts4TgAZrpjubPcaIE87FqDs73MaPxzpLubg-mW5DuobcWS4_sx5uePqcUXr8aKM45mgonmbUR",
-            "xml": "https://api-storage.trytoku.com/v1/streaming/T2a0iGFy3f6u0wuGUsH53K25WEd8ayGI5epHs8IMAIz-yPCYDMBxtBDDLJHOyo9wt4JEctZzRSxyMHo_FJIq9Di1nVPUVAEtNgFBM2KTuEnVjjkbpk8LpoVHkpy_yVXgcw8vxRNE7F6Z1bRktyzK4Vp4lpIjaHIjmldJqw_I2UO4D2Fp_ddfgR4_LuI19jufX4RZS3Xfcsu7pB2jpkEyYB_26qZXQ1KSAxptzPb-9hqE-FyarakR9gHTX14eNc_geKZdHgjNKuwEKuwaJ6SUjiUPlqIh9BdTjym7612VS3gYzFAcJYX7BHA0AV4VN2xx661Xq-UcLojb4yNdq0NEztZy-t4feEMWU2YkYker5Q56BM2pj8Qu0dZT9OR18_4hVPnv_fPfwB6Am3icH6dB0t9LW_w8p19Z2NLd2ssaobVNG4SPYr1Ut1y3zH-pIbu11W0EJ_jN4r2RoSDvuyttrZ3E5qpZs_aYOtX3RuTfG7-r6JaE7IzkyJgTIBuT_p88chaV6dtysXuXaDcgptP2vkiSSFGsrJqXXIz18Mh_8h4o41t0ZcGL_ZtpFU2U-zfH6XZzPfRqXWlgPWLo7ysmnroC_c5pIycnSf7PVw6t8PXcaXIes32S-jKX5TCD3yzOC6FZoCYTL68uFrFVg8IxUlT9wQZCTcGDzdFu30bN52fgYNksUXHJM3AoMRP6HRgcDBMwrw1BMwevFj5R"
+            "pdf": "https://api-storage.trytoku.com/v1/streaming/ZkF02S2iByw6T4BFvRMhQ9_6jMg0fJ0XHhKJVOZ6Y8lJu9xDb0avTpeQfKB0Tak0sHlLl14hzXFiOGFe4TYUK6TZIKCpgANvTVNlzxa_h_bskcIK-2-2VRJ3tmqfC1IeTOYKkprK3c9FN0GdNtXPZgkhNRpkHiqKig2kAm4pFRrxu1ry0HrMfGT2-ygsJDIxUKYfoU0xkigovmAkMnbp4zbn4mGcymx8_rmWApx3MCFAojIGmAPXuXJtzrdQxObXtKV3BxGf_7jHFiUk4sCYhXwd0ztCm--T2E-E4pqkRlOKwtIJY5DFLAmkenOura6SsPgpRfaH-R1QtVqxJZUcZ8KAMHl7TTPjKF462Lgz0DUhjKd5PGzvJejHnOR6UwCD5oSSPwiEEwBhrcPWiepRCeHvzFCtQo93Lb-LwpXSWuvsfrHmKnELuvafFp4FhNmPk-bv-7MmP3h8b16cnF_jnR4EJ2s0cMTgXgLn2phbGnlh-2kyesgy2AEOJEwSLSQ3Xgf3CMU2Ms4DjLYmxh6u0nOsM3on-w8MLCFU_U1kjkwmk1i646nx1Nt4jqBRRn8UCorX6LUEUApySC55HOxf5uHDorO8jIGem7_X4DGzYcz7DsGmB4vGADOj9ny-M0dBSrgF9UXzSC-YyJg-eAvcDKFNrXTJIFEHNhHUwWIx6ogmNHOEuiFBwgdfyOPIcVL1EzGMrFRrJf1DbFX2",
+            "xml": "https://api-storage.trytoku.com/v1/streaming/xhYlfn6a4j20ZDpXiNCGMNtQf5kf_u255buGA69eEhvOPR1PSmnJ580rB49HBKlw8ne8SpdmA6DxgHhxHb990Nlgt9tvO9WCTGRWHa1VU8HGzewgST7ofXPa44hNDQk7R49FJVYjzYh74zTYO_pTdxClBo3anbcfPOd7T_lncjGzBuzZ45TEC4saV9u9aJ8EQsrrdAt1tTXMUC9fGrWLxLEuuKsK-U_2EPXjxXet0V85_PvI4pW8hTYHkwBemIQeXnDzX3L-NLhqRB23GajBfcn9m1_CprJcYZeq2kZxL-hMzYctqlcZnGRQpW6qxR22Y_IyXSWHJywbHnpG2AOVw6UVe09YQSbdZGiJyGd7-gI4tB65CII8A_hGGCundQTP8NZ0bl1vg0CRFO95SZ4wD2qkP8iPy9LYmIYREoJ02bZumPMSeif8jQEqr-joxSkeUKmEbVqG13aW2QmQPujEtTuvx0_cuezZJtXvSPoiuyX4mUap-F3G3jU-LwW4RtJ8mcxfSJARlPHPZIHALevGhK7zeImRV34A7ZL-t6JvNc_lGkfLZc0r66ijkTP7dfSssdSmagy0s3Imq-uWj0V5TCp-F80bUBEZjEKcGx5zhO6a-qQbbo3HEtpzSw8cfT-HIFHyyhIi2rXdcP-6J7Fxu0pgtZvFROB58VvxmVvYCJg40sOlkXDQHjeRYJXjS6-wDgI8QM_WabP_y_bZ"
         },
-        "account_number": "002886900054484910",
-        "customer_identifier": "QUHH771228D26",
+        "account_number": "012840015093214334",
+        "customer_identifier": "TOMB971024UW4",
         "voucher_information": {
-            "account_number": "002886900054484910",
-            "customer_identifier": "QUHH781228D29",
-            "receiver_institution": "BANAMEX",
-            "receiver_name": "HERIBERTO,QUEZADAS/HERRERA",
+            "account_number": "012840015093214334",
+            "customer_identifier": "TOMB971024UW4",
+            "receiver_institution": "BBVA BANCOMER",
+            "receiver_name": "BERNARDO TORRES MEDINA",
             "receiver_account_type": "40",
             "operation_date": "2025-07-02",
-            "operation_time": "16:26:51",
-            "spei_id": "40002",
-            "signature": "RrYHqz1uvOoY2kZLgpyuBgRJAiXkySuqKdxIaga8QRtfH6hobqP7IXIvAexRbeJk+oUg6u5ZmPh5rx7Lb7HF1JlkIdv1EVAdGc6clGlZnFy4ktw1DBX9/QsQtsH+06jXhkT+OPtG+OFlFR/VSWFAV+SoRvClRbqtkOKgNpvh0JVadMEBHpzfuCsKHcryNvjbDRwgvw2jtPjRAGcH+7EoPRHtShADFXETiw5QFJUT+QmE+KuaTWjnkxIAp1LUPW9oM497bT8Kx/GRjgbm2EuOWebMDJG1aFXOO7j0IEd0+LpCaY8VfMa9IaL1fe7QohuxsnHJl9Ol7T6QglwpKe3pFg==",
-            "certificate_number": "00001000000512097613",
-            "cda_chain": "||1|02072025|02072025|162651|40002|STP|TRYTOKU S DE RL DE CV|40|646180328500700002|TRY220304U60|BANAMEX|HERIBERTO,QUEZADAS/HERRERA|40|002886900054484910|QUHH781228D29|Validation transfer|0.00|0.01|NA|NA|0|0|NA|0|0.00|00001000000512097613||RrYHqz1uvOoY2kZLgpyuBgRJAiXkySuqKdxIaga8QRtfH6hobqP7IXIvAexRbeJk+oUg6u5ZmPh5rx7Lb7HF1JlkIdv1EVAdGc6clGlZnFy4ktw1DBX9/QsQtsH+06jXhkT+OPtG+OFlFR/VSWFAV+SoRvClRbqtkOKgNpvh0JVadMEBHpzfuCsKHcryNvjbDRwgvw2jtPjRAGcH+7EoPRHtShADFXETiw5QFJUT+QmE+KuaTWjnkxIAp1LUPW9oM497bT8Kx/GRjgbm2EuOWebMDJG1aFXOO7j0IEd0+LpCaY8VfMa9IaL1fe7QohuxsnHJl9Ol7T6QglwpKe3pFg==",
-            "tracking_id": "2025070290646VCC2226450GAZRM"
+            "operation_time": "17:46:26",
+            "spei_id": "40012",
+            "signature": "ACaJrB0qn3s2YuzxibHyUHv4PO8gWjmH/ISvHezPKDuJBdTQ69aqyFqxW7AKtRbi4JQr5BKD7hxiaIAaomMELbG1ERijvnseTNR6Hu5OhDpsuprCiAZTIrlN3nIaMK6dekru1hOPNQDPGLXCROI+mDtlwjUnIIhtJNjIKF/reVHjqAgksaI2NxIwcMACtTeZOGM1C4BQK/8XQ8DqSqqryvJZNwTlrO+JB5DYbJ0gy5TESFryfPza5rleCk0b5jgPYITI7p109t9a/8CSAyViBeEb+RKBMNeJQqrTxSOdq6N24i72eZA8+zvbSKkiBjiG33FEnUwnR+7jkZGYAcaf0g==",
+            "certificate_number": "00001000000511796968",
+            "cda_chain": "||01|02072025|02072025|174626|40012|STP|TRYTOKU S DE RL DE CV|40|646180328500700002|TRY220304U60|BBVA BANCOMER|BERNARDO TORRES MEDINA|40|012840015093214334|TOMB971024UW4|Validation transfer|000000000000000.00|000000000000000.01|NA|NA|0|0|NA|0|000000000000000.00|00001000000511796968||ACaJrB0qn3s2YuzxibHyUHv4PO8gWjmH/ISvHezPKDuJBdTQ69aqyFqxW7AKtRbi4JQr5BKD7hxiaIAaomMELbG1ERijvnseTNR6Hu5OhDpsuprCiAZTIrlN3nIaMK6dekru1hOPNQDPGLXCROI+mDtlwjUnIIhtJNjIKF/reVHjqAgksaI2NxIwcMACtTeZOGM1C4BQK/8XQ8DqSqqryvJZNwTlrO+JB5DYbJ0gy5TESFryfPza5rleCk0b5jgPYITI7p109t9a/8CSAyViBeEb+RKBMNeJQqrTxSOdq6N24i72eZA8+zvbSKkiBjiG33FEnUwnR+7jkZGYAcaf0g==",
+            "tracking_id": "2025070290646VCC2346216CGYVI"
         }
     }
 }

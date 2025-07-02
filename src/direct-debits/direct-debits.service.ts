@@ -88,7 +88,6 @@ export class DirectDebitsService {
         clabeIntroducida: clabe,
         rfcIntroducido: rfc,
         idEvento: tokuResponse.data.id_bank_account_verification,
-        idSolicitud: -1,
         idSocketIo
       })
 
