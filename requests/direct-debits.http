@@ -1,0 +1,6 @@
+POST http://localhost:3000/api/direct-debits/validate-clabe
+Content-Type: application/json
+
+{
+  "clabe" : "638180000168328657"
+}

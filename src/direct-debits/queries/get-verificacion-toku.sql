@@ -1,0 +1,1 @@
+SELECT * FROM web.verificacionToku  WITH (NOLOCK) WHERE idEvento = @idEvento
