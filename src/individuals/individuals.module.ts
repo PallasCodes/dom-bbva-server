@@ -1,14 +1,18 @@
-import { Module } from '@nestjs/common'
+import { forwardRef, Module } from '@nestjs/common'
 
 import { SqlService } from '../database/sql.service'
-import { DirectDebitsService } from '../direct-debits/direct-debits.service'
-import { WebsocketModule } from '../websocket/websocket.module'
 import { IndividualsController } from './individuals.controller'
 import { IndividualsService } from './individuals.service'
+import { WebsocketModule } from '../websocket/websocket.module'
+import { DirectDebitsModule } from '../direct-debits/direct-debits.module'
 
 @Module({
   controllers: [IndividualsController],
-  providers: [IndividualsService, SqlService, DirectDebitsService],
-  imports: [WebsocketModule]
+  providers: [IndividualsService, SqlService],
+  imports: [
+    WebsocketModule,
+    forwardRef(() => DirectDebitsModule) // 👈 importante
+  ],
+  exports: [IndividualsService]
 })
 export class IndividualsModule {}

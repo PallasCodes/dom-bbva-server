@@ -1,7 +1,13 @@
 import * as fs from 'fs'
 import * as path from 'path'
 
-import { Injectable, UnauthorizedException } from '@nestjs/common'
+import {
+  forwardRef,
+  Inject,
+  Injectable,
+  NotFoundException,
+  UnauthorizedException
+} from '@nestjs/common'
 
 import { SqlService } from '../database/sql.service'
 import { ValidateCodeDto } from './dto/validate-code.dto'
@@ -16,6 +22,7 @@ export class IndividualsService {
 
   constructor(
     private readonly sqlService: SqlService,
+    @Inject(forwardRef(() => DirectDebitsService))
     private readonly directDebitsService: DirectDebitsService
   ) {
     this.validateCut = fs.readFileSync(
@@ -52,6 +59,10 @@ export class IndividualsService {
     const [individualInfo] = await this.sqlService.query(this.getIndividualInfo, {
       folioOrden
     })
+
+    if (!individualInfo) {
+      throw new NotFoundException('Cliente no encontrado')
+    }
 
     return individualInfo
   }

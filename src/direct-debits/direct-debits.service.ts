@@ -7,9 +7,9 @@ import axios from 'axios'
 
 import { SqlService } from '../database/sql.service'
 import { VerificacionToku } from '../types/verificacion-toku.interface'
+import { WebsocketService } from '../websocket/websocket.service'
 import { TokuWebhookRequestDto } from './dto/toku-webhook-request.dto'
 import { ValidateClabeDto } from './dto/validate-clabe.dto'
-import { WebsocketService } from '../websocket/websocket.service'
 
 @Injectable()
 export class DirectDebitsService {
@@ -17,6 +17,7 @@ export class DirectDebitsService {
   private readonly updateProcessStep: string
   private readonly createVerificacionToku: string
   private readonly getVerificacionToku: string
+  private readonly updateVerificacionToku: string
 
   constructor(
     private configService: ConfigService,
@@ -48,14 +49,8 @@ export class DirectDebitsService {
     })
   }
 
-  async getIndividualRfc(clabe: string) {
-    return 'TOMB971024UW4'
-  }
-
-  async validateClabe({ clabe, idSocketIo }: ValidateClabeDto) {
+  async validateClabe({ clabe, idSocketIo, rfc }: ValidateClabeDto) {
     try {
-      const rfc = await this.getIndividualRfc(clabe)
-
       const headers = {
         accept: 'application/json',
         'content-type': 'application/json',
@@ -93,7 +88,7 @@ export class DirectDebitsService {
         clabeIntroducida: clabe,
         rfcIntroducido: rfc,
         idEvento: tokuResponse.data.id_bank_account_verification,
-        idSolicitud: 1,
+        idSolicitud: -1,
         idSocketIo
       })
 
@@ -120,18 +115,38 @@ export class DirectDebitsService {
       throw new NotFoundException('Evento toku no encontrado')
     }
 
-    // TODO: insert en tabla web.verificacionToku
+    const { bank_account_verification: toku } = dto
+    const { voucher_information: voucher } = toku
+
+    const verificacionTokuPayload: Partial<VerificacionToku> = {
+      idWebhook: dto.id,
+      pdfUrl: toku.voucher_url.pdf,
+      rfcIntroducido: toku.customer_identifier,
+      clabeIntroducida: toku.account_number,
+      clabeReal: voucher.account_number,
+      rfcReal: voucher.customer_identifier,
+      institucionBancaria: voucher.receiver_name,
+      nombreCompleto: voucher.receiver_institution,
+      validacion: toku.validation,
+      status: toku.status,
+      idEvento: toku.id_bank_account_verification
+    }
+
+    await this.sqlService.query(this.updateVerificacionToku, verificacionTokuPayload)
+
+    const eventPayload = {
+      valid: verificacionToku.validacion === 'SUCCESS',
+      message:
+        verificacionToku.validacion === 'SUCCESS'
+          ? 'La validación ha sido exitosa'
+          : 'La CLABE no coincide con tu RFC'
+    }
 
     this.websocketService.emitToClient(
       verificacionToku.idSocketIo,
       'clabe_verification_result',
-      {
-        valid: verificacionToku.validacion === 'SUCCESS',
-        message: 'La validación ha sido exitosa'
-      }
+      eventPayload
     )
-
-    console.log('websocket emitido')
 
     return { message: 'Proceso de validación finalizado' }
   }

@@ -7,4 +7,7 @@ export class ValidateClabeDto {
 
   @IsString()
   idSocketIo: string
+
+  @IsString()
+  rfc: string
 }
