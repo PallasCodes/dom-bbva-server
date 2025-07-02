@@ -1,26 +1,11 @@
-import { Injectable } from '@nestjs/common';
-import { CreateWebsocketDto } from './dto/create-websocket.dto';
-import { UpdateWebsocketDto } from './dto/update-websocket.dto';
+import { Injectable } from '@nestjs/common'
+import { WebsocketGateway } from './websocket.gateway'
 
 @Injectable()
 export class WebsocketService {
-  create(createWebsocketDto: CreateWebsocketDto) {
-    return 'This action adds a new websocket';
-  }
+  constructor(private readonly websocketGateway: WebsocketGateway) {}
 
-  findAll() {
-    return `This action returns all websocket`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} websocket`;
-  }
-
-  update(id: number, updateWebsocketDto: UpdateWebsocketDto) {
-    return `This action updates a #${id} websocket`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} websocket`;
+  emitToClient(socketId: string, event: string, payload: any) {
+    this.websocketGateway.emitToClient(socketId, event, payload)
   }
 }

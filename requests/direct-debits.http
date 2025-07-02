@@ -4,3 +4,38 @@ Content-Type: application/json
 {
   "clabe" : "638180000168328657"
 }
+
+###
+POST http://localhost:3000/api/direct-debits/toku-webhook
+Content-Type: application/json
+
+{
+    "id": "wheve_SBcrf6oxKLwP39m5shEPe1vJqTcun9Do",
+    "event_type": "bank_account_verification.result",
+    "bank_account_verification": {
+        "id_bank_account_verification": "bav_8WlQXdohrRW9PJ07B6rmD6Tu3tNhD9vq",
+        "status": "DONE",
+        "validation": "FAILED",
+        "reason": null,
+        "voucher_url": {
+            "pdf": "https://api-storage.trytoku.com/v1/streaming/mnYklaNatSmIAUl66TBUbQfdfCS7o1IA6dj-Byqu0YBQ58U4yi0X5zyTHm6htgPNUh_aujPbUgLV2S-tiCHZA8ATCHXCcf_617xyFOIcZ9-RUEPDrX7K0C70KxzoEI7kjdAamBMc0IcB5Evtdc6rZdzS4cJitoTSM9p2W0mH3awmAssekYvyaq2P_V-eGOICVLReyUXXcX4CvrSQ909fWwQJMY3zsxLZOf4LCXq9R5MNbyVSZgK9o2gGcsB9xFP9R6hSqX_h3jwWGOBEG6xctA0RpuEi7LMISCSMptDIhsL3a5GgUiHQipD4l3Sc9F-2gpsJ-D85d53V-uQqGTY30tVlQ2nAOkacy4yBOlXPVqN3dWWtcqMsnxUrR-evXCZhF9IWHNyy85EJB_zC2Az1OzBKF_oellR1fiqADn_ixr9V7yFoXnXFhS7eka9SKZDRZ-FD0o19jYLS1RyQdqz_0_b7srCVLnph_GO0a01N8QVbobxaaiX7YdJBn687HgExd8JhCrnUFRv82pXnYqETQ1KIDFjgAT-y1SujpjwI_MySLPorVQ-Nt0rbW-xoaKIRWZEfenajI-DeA1Bq2gO-5SekBRvQx-gkTWfDVIFNA6eG_yG4pAv712KIdSKR62qsLkMwyz8Ts4TgAZrpjubPcaIE87FqDs73MaPxzpLubg-mW5DuobcWS4_sx5uePqcUXr8aKM45mgonmbUR",
+            "xml": "https://api-storage.trytoku.com/v1/streaming/T2a0iGFy3f6u0wuGUsH53K25WEd8ayGI5epHs8IMAIz-yPCYDMBxtBDDLJHOyo9wt4JEctZzRSxyMHo_FJIq9Di1nVPUVAEtNgFBM2KTuEnVjjkbpk8LpoVHkpy_yVXgcw8vxRNE7F6Z1bRktyzK4Vp4lpIjaHIjmldJqw_I2UO4D2Fp_ddfgR4_LuI19jufX4RZS3Xfcsu7pB2jpkEyYB_26qZXQ1KSAxptzPb-9hqE-FyarakR9gHTX14eNc_geKZdHgjNKuwEKuwaJ6SUjiUPlqIh9BdTjym7612VS3gYzFAcJYX7BHA0AV4VN2xx661Xq-UcLojb4yNdq0NEztZy-t4feEMWU2YkYker5Q56BM2pj8Qu0dZT9OR18_4hVPnv_fPfwB6Am3icH6dB0t9LW_w8p19Z2NLd2ssaobVNG4SPYr1Ut1y3zH-pIbu11W0EJ_jN4r2RoSDvuyttrZ3E5qpZs_aYOtX3RuTfG7-r6JaE7IzkyJgTIBuT_p88chaV6dtysXuXaDcgptP2vkiSSFGsrJqXXIz18Mh_8h4o41t0ZcGL_ZtpFU2U-zfH6XZzPfRqXWlgPWLo7ysmnroC_c5pIycnSf7PVw6t8PXcaXIes32S-jKX5TCD3yzOC6FZoCYTL68uFrFVg8IxUlT9wQZCTcGDzdFu30bN52fgYNksUXHJM3AoMRP6HRgcDBMwrw1BMwevFj5R"
+        },
+        "account_number": "002886900054484910",
+        "customer_identifier": "QUHH771228D26",
+        "voucher_information": {
+            "account_number": "002886900054484910",
+            "customer_identifier": "QUHH781228D29",
+            "receiver_institution": "BANAMEX",
+            "receiver_name": "HERIBERTO,QUEZADAS/HERRERA",
+            "receiver_account_type": "40",
+            "operation_date": "2025-07-02",
+            "operation_time": "16:26:51",
+            "spei_id": "40002",
+            "signature": "RrYHqz1uvOoY2kZLgpyuBgRJAiXkySuqKdxIaga8QRtfH6hobqP7IXIvAexRbeJk+oUg6u5ZmPh5rx7Lb7HF1JlkIdv1EVAdGc6clGlZnFy4ktw1DBX9/QsQtsH+06jXhkT+OPtG+OFlFR/VSWFAV+SoRvClRbqtkOKgNpvh0JVadMEBHpzfuCsKHcryNvjbDRwgvw2jtPjRAGcH+7EoPRHtShADFXETiw5QFJUT+QmE+KuaTWjnkxIAp1LUPW9oM497bT8Kx/GRjgbm2EuOWebMDJG1aFXOO7j0IEd0+LpCaY8VfMa9IaL1fe7QohuxsnHJl9Ol7T6QglwpKe3pFg==",
+            "certificate_number": "00001000000512097613",
+            "cda_chain": "||1|02072025|02072025|162651|40002|STP|TRYTOKU S DE RL DE CV|40|646180328500700002|TRY220304U60|BANAMEX|HERIBERTO,QUEZADAS/HERRERA|40|002886900054484910|QUHH781228D29|Validation transfer|0.00|0.01|NA|NA|0|0|NA|0|0.00|00001000000512097613||RrYHqz1uvOoY2kZLgpyuBgRJAiXkySuqKdxIaga8QRtfH6hobqP7IXIvAexRbeJk+oUg6u5ZmPh5rx7Lb7HF1JlkIdv1EVAdGc6clGlZnFy4ktw1DBX9/QsQtsH+06jXhkT+OPtG+OFlFR/VSWFAV+SoRvClRbqtkOKgNpvh0JVadMEBHpzfuCsKHcryNvjbDRwgvw2jtPjRAGcH+7EoPRHtShADFXETiw5QFJUT+QmE+KuaTWjnkxIAp1LUPW9oM497bT8Kx/GRjgbm2EuOWebMDJG1aFXOO7j0IEd0+LpCaY8VfMa9IaL1fe7QohuxsnHJl9Ol7T6QglwpKe3pFg==",
+            "tracking_id": "2025070290646VCC2226450GAZRM"
+        }
+    }
+}

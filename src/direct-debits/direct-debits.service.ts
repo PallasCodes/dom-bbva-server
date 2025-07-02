@@ -122,14 +122,16 @@ export class DirectDebitsService {
 
     // TODO: insert en tabla web.verificacionToku
 
-    // this.websocketGateway.emitToClient(
-    //   verificacionToku.idSocketIo,
-    //   'clabe_verification_result',
-    //   {
-    //     valid: dto.bank_account_verification.validation === 'SUCCESS',
-    //     message: 'La validación ha sido exitosa'
-    //   }
-    // )
+    this.websocketService.emitToClient(
+      verificacionToku.idSocketIo,
+      'clabe_verification_result',
+      {
+        valid: verificacionToku.validacion === 'SUCCESS',
+        message: 'La validación ha sido exitosa'
+      }
+    )
+
+    console.log('websocket emitido')
 
     return { message: 'Proceso de validación finalizado' }
   }

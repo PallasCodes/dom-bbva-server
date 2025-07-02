@@ -1,34 +1,16 @@
-import { WebSocketGateway, SubscribeMessage, MessageBody } from '@nestjs/websockets';
-import { WebsocketService } from './websocket.service';
-import { CreateWebsocketDto } from './dto/create-websocket.dto';
-import { UpdateWebsocketDto } from './dto/update-websocket.dto';
+import { WebSocketGateway, WebSocketServer } from '@nestjs/websockets'
+import { Server } from 'socket.io'
 
 @WebSocketGateway()
 export class WebsocketGateway {
-  constructor(private readonly websocketService: WebsocketService) {}
+  @WebSocketServer()
+  server: Server
 
-  @SubscribeMessage('createWebsocket')
-  create(@MessageBody() createWebsocketDto: CreateWebsocketDto) {
-    return this.websocketService.create(createWebsocketDto);
+  emitToAll(event: string, payload: any) {
+    this.server.emit(event, payload)
   }
 
-  @SubscribeMessage('findAllWebsocket')
-  findAll() {
-    return this.websocketService.findAll();
-  }
-
-  @SubscribeMessage('findOneWebsocket')
-  findOne(@MessageBody() id: number) {
-    return this.websocketService.findOne(id);
-  }
-
-  @SubscribeMessage('updateWebsocket')
-  update(@MessageBody() updateWebsocketDto: UpdateWebsocketDto) {
-    return this.websocketService.update(updateWebsocketDto.id, updateWebsocketDto);
-  }
-
-  @SubscribeMessage('removeWebsocket')
-  remove(@MessageBody() id: number) {
-    return this.websocketService.remove(id);
+  emitToClient(socketId: string, event: string, payload: any) {
+    this.server.to(socketId).emit(event, payload)
   }
 }
