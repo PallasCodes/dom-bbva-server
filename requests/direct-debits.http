@@ -39,3 +39,22 @@ Content-Type: application/json
         }
     }
 }
+
+###
+POST http://localhost:3000/api/direct-debits
+Content-Type: application/json
+
+{
+  "nombre1": "Bernardo",
+  "nombre2": "Luis",
+  "apellidoPaterno": "Torres",
+  "rfc": "TOMB940505ABC",
+  "curp": "TOMB940505HDFLRN07",
+  "idNacionalidad": 1,
+  "idEstadoCivil": 2,
+  "dependientes": 0,
+  "sexo": "M",
+  "clabe": "012345678901234567",
+  "urlFirma": "https://tuservidor.com/firmas/bertorres.png",
+  "idSolicitudDomiciliacion": 123
+}

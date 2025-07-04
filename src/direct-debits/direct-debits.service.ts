@@ -1,13 +1,19 @@
 import * as fs from 'fs'
 import * as path from 'path'
 
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common'
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException
+} from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import axios from 'axios'
 
 import { SqlService } from '../database/sql.service'
 import { VerificacionToku } from '../types/verificacion-toku.interface'
 import { WebsocketService } from '../websocket/websocket.service'
+import { SaveDirectDebitDto } from './dto/save-direct-debit.dto'
 import { TokuWebhookRequestDto } from './dto/toku-webhook-request.dto'
 import { ValidateClabeDto } from './dto/validate-clabe.dto'
 
@@ -18,6 +24,7 @@ export class DirectDebitsService {
   private readonly createVerificacionToku: string
   private readonly getVerificacionToku: string
   private readonly updateVerificacionToku: string
+  private readonly saveDirectDebit: string
 
   constructor(
     private configService: ConfigService,
@@ -40,6 +47,21 @@ export class DirectDebitsService {
       path.join(__dirname, 'queries', 'get-verificacion-toku.sql'),
       'utf8'
     )
+
+    this.saveDirectDebit = fs.readFileSync(
+      path.join(__dirname, 'queries', 'save-info-domiciliacion.sql'),
+      'utf8'
+    )
+  }
+
+  async save(dto: SaveDirectDebitDto) {
+    try {
+      await this.sqlService.query(this.saveDirectDebit, dto)
+
+      return { message: 'Información guardada' }
+    } catch (err) {
+      throw new InternalServerErrorException('Ocurrió un error al guardar tu información')
+    }
   }
 
   updateStep(step: number, idSolicitudDom: number) {
