@@ -83,7 +83,6 @@ export class DirectDebitsService {
         throw new BadRequestException('La cuenta CLABE o el RFC no son válidos')
       }
 
-      // TODO: use real values
       await this.sqlService.query(this.createVerificacionToku, {
         clabeIntroducida: clabe,
         rfcIntroducido: rfc,
@@ -113,6 +112,8 @@ export class DirectDebitsService {
     if (!verificacionToku) {
       throw new NotFoundException('Evento toku no encontrado')
     }
+
+    if (!verificacionToku.procesoDom) return
 
     const { bank_account_verification: toku } = dto
     const { voucher_information: voucher } = toku

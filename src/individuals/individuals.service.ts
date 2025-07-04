@@ -78,6 +78,10 @@ export class IndividualsService {
   async getLoanInfo(folioOrden: string) {
     const [loanInfo] = await this.sqlService.query(this.getLoanInfoQuery, { folioOrden })
 
+    if (!loanInfo) {
+      throw new NotFoundException('No se encontró la información de tu folio')
+    }
+
     return loanInfo
   }
 }
