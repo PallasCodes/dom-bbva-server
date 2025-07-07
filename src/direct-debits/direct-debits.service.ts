@@ -12,6 +12,7 @@ import {
 import { ConfigService } from '@nestjs/config'
 import axios from 'axios'
 
+import puppeteer from 'puppeteer'
 import { SqlService } from '../database/sql.service'
 import { VerificacionToku } from '../types/verificacion-toku.interface'
 import { WebsocketService } from '../websocket/websocket.service'
@@ -29,6 +30,7 @@ export class DirectDebitsService {
   private readonly updateVerificacionToku: string
   private readonly saveDirectDebit: string
   private readonly createDocumentoOrden: string
+  private readonly digitalSignature = 4202
 
   private readonly s3: S3Client
   private readonly bucket: string
@@ -197,7 +199,7 @@ export class DirectDebitsService {
   }
 
   async uploadSignature(file: Express.Multer.File, { idOrden }: UploadSignatureDto) {
-    const codeName = `${idOrden}.4251`
+    const codeName = `${idOrden}.${this.digitalSignature}`
     const extension = path.extname(file.originalname)
     const fileName = `${codeName}.${new Date().getTime()}${extension}`
     const key = `${new Date().getFullYear()}/${idOrden}/${fileName}`
@@ -216,7 +218,7 @@ export class DirectDebitsService {
       const queryParams = {
         idOrden,
         publicUrl,
-        idDocumento: 4251,
+        idDocumento: this.digitalSignature,
         nombreArchivo: fileName,
         tamanoArchivo: file.size,
         s3Key: key
@@ -228,5 +230,70 @@ export class DirectDebitsService {
       this.logger.error('Error uploading file to S3', error)
       throw new InternalServerErrorException('Error al guardar la firma digital')
     }
+  }
+
+  async getDirectDebitDocument(idOrden: number) {
+    const [result] = await this.sqlService.query(
+      `EXEC dbo.sp_jasper_domiciliacionBBVA @idOrden = ${idOrden}`
+    )
+
+    if (!result) {
+      throw new NotFoundException('No se encontró la información de tu credito')
+    }
+
+    const imagePath = 'C:/Users/siste/Downloads/domicliacion_fimubac.jpg'
+    const base64Image = fs.readFileSync(imagePath).toString('base64')
+    const imageMimeType = 'image/jpeg' // o 'image/png' si es PNG
+
+    const html = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <style>
+        @page { size: letter; margin: 0; }
+        html, body {
+          margin: 0;
+          padding: 0;
+          width: 100%;
+          height: 100%;
+        }
+        body {
+          background: url('data:${imageMimeType};base64,${base64Image}') no-repeat center center;
+          background-size: cover;
+        }
+        .content {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          padding: 30px;
+          box-sizing: border-box;
+          color: white;
+          font-family: sans-serif;
+        }
+      </style>
+    </head>
+    <body>
+      <div class="content">
+        <h1>Reporte</h1>
+        <p>Este es un reporte con fondo personalizado.</p>
+      </div>
+    </body>
+    </html>
+  `
+
+    const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox'] })
+    const page = await browser.newPage()
+    await page.setContent(html, { waitUntil: 'networkidle0' })
+
+    const pdfBuffer = await page.pdf({
+      format: 'letter',
+      printBackground: true,
+      margin: { top: '0in', right: '0in', bottom: '0in', left: '0in' }
+    })
+
+    await browser.close()
+    return pdfBuffer
   }
 }
