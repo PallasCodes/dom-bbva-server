@@ -1,10 +1,12 @@
 import * as fs from 'fs'
 import * as path from 'path'
 
+import { ObjectCannedACL, PutObjectCommand, S3Client } from '@aws-sdk/client-s3'
 import {
   BadRequestException,
   Injectable,
   InternalServerErrorException,
+  Logger,
   NotFoundException
 } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
@@ -15,6 +17,7 @@ import { VerificacionToku } from '../types/verificacion-toku.interface'
 import { WebsocketService } from '../websocket/websocket.service'
 import { SaveDirectDebitDto } from './dto/save-direct-debit.dto'
 import { TokuWebhookRequestDto } from './dto/toku-webhook-request.dto'
+import { UploadSignatureDto } from './dto/upload-signature-dto'
 import { ValidateClabeDto } from './dto/validate-clabe.dto'
 
 @Injectable()
@@ -25,6 +28,11 @@ export class DirectDebitsService {
   private readonly getVerificacionToku: string
   private readonly updateVerificacionToku: string
   private readonly saveDirectDebit: string
+  private readonly createDocumentoOrden: string
+
+  private readonly s3: S3Client
+  private readonly bucket: string
+  private readonly logger = new Logger(DirectDebitsService.name)
 
   constructor(
     private configService: ConfigService,
@@ -52,6 +60,21 @@ export class DirectDebitsService {
       path.join(__dirname, 'queries', 'save-info-domiciliacion.sql'),
       'utf8'
     )
+
+    this.createDocumentoOrden = fs.readFileSync(
+      path.join(__dirname, 'queries', 'create-documento-orden.sql'),
+      'utf8'
+    )
+
+    this.s3 = new S3Client({
+      region: configService.get('AWS_REGION') as string,
+      credentials: {
+        accessKeyId: configService.get('AWS_ACCESS_KEY_ID') as string,
+        secretAccessKey: configService.get('AWS_SECRET_ACCESS_KEY') as string
+      }
+    })
+
+    this.bucket = configService.get('AWS_S3_BUCKET') as string
   }
 
   async save(dto: SaveDirectDebitDto) {
@@ -171,5 +194,39 @@ export class DirectDebitsService {
     )
 
     return { message: 'Proceso de validación finalizado' }
+  }
+
+  async uploadSignature(file: Express.Multer.File, { idOrden }: UploadSignatureDto) {
+    const codeName = `${idOrden}.4251`
+    const extension = path.extname(file.originalname)
+    const fileName = `${codeName}.${new Date().getTime()}${extension}`
+    const key = `${new Date().getFullYear()}/${idOrden}/${fileName}`
+    const params = {
+      Bucket: this.bucket,
+      Key: key,
+      Body: file.buffer,
+      ContentType: file.mimetype,
+      ACL: ObjectCannedACL.public_read
+    }
+
+    try {
+      await this.s3.send(new PutObjectCommand(params))
+      const publicUrl = `https://s3.amazonaws.com/${this.bucket}/${key}`
+
+      const queryParams = {
+        idOrden,
+        publicUrl,
+        idDocumento: 4251,
+        nombreArchivo: fileName,
+        tamanoArchivo: file.size,
+        s3Key: key
+      }
+      await this.sqlService.query(this.createDocumentoOrden, queryParams)
+
+      return { message: 'Firma digital guardada correctamente' }
+    } catch (error) {
+      this.logger.error('Error uploading file to S3', error)
+      throw new InternalServerErrorException('Error al guardar la firma digital')
+    }
   }
 }
