@@ -8,6 +8,10 @@
       {
         "include": "**/*.sql",
         "outDir": "dist"
+      },
+      {
+        "include": "**/*.jpg",
+        "outDir": "dist"
       }
     ],
     "watchAssets": true
