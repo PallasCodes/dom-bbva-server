@@ -243,13 +243,19 @@ export class DirectDebitsService {
 
     const imagePath = 'C:/Users/siste/Downloads/domicliacion_fimubac.jpg'
     const base64Image = fs.readFileSync(imagePath).toString('base64')
-    const imageMimeType = 'image/jpeg' // o 'image/png' si es PNG
+    const imageMimeType = 'image/jpeg'
 
     const html = `
     <!DOCTYPE html>
     <html>
     <head>
       <style>
+        p {
+          position: fixed;
+          color: #000000;
+          font-weight: bold;
+        }
+
         @page { size: letter; margin: 0; }
         html, body {
           margin: 0;
@@ -267,7 +273,6 @@ export class DirectDebitsService {
           left: 0;
           width: 100%;
           height: 100%;
-          padding: 30px;
           box-sizing: border-box;
           color: white;
           font-family: sans-serif;
@@ -276,8 +281,21 @@ export class DirectDebitsService {
     </head>
     <body>
       <div class="content">
-        <h1>Reporte</h1>
-        <p>Este es un reporte con fondo personalizado.</p>
+        <p style="top: 157px; left: 76px;">GB PLUS S.A. DE C.V. SOFOM E.N.R.</p>
+        <p style="top: 301px; left: 76px;">${result.banco}</p>
+
+        <p style="top: 621px; left: 50px;">${result.deudor}</p>
+        <p style="top: 476px; left: 490px;">${result.pagos}</p>
+
+        <p style="top: 998px; left: 50px;">${result.deudor}</p>
+
+        <div style="top: 570px; left: 480px; width: 160px; position: absolute;">
+          <img style="width: 100%; height: auto;" src="${result.Firmadigitalizada}" />
+        </div>
+
+        <div style="top: 944px; left: 480px; width: 160px; position: absolute;">
+          <img style="width: 100%; height: auto;" src="${result.Firmadigitalizada}" />
+        </div>
       </div>
     </body>
     </html>
