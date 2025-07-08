@@ -38,7 +38,8 @@ export class DirectDebitsService {
   private readonly saveDirectDebit: string
   private readonly createDocumentoOrden: string
   private readonly digitalSignature = 4202
-  private readonly directDebit = 4251
+  // private readonly directDebit = 4251
+  private readonly directDebit = 4239
 
   private readonly s3: S3Client
   private readonly bucket: string
@@ -76,6 +77,11 @@ export class DirectDebitsService {
       'utf8'
     )
 
+    this.updateVerificacionToku = fs.readFileSync(
+      path.join(__dirname, 'queries', 'update-verificacion-toku.sql'),
+      'utf8'
+    )
+
     this.s3 = new S3Client({
       region: configService.get('AWS_REGION') as string,
       credentials: {
@@ -104,7 +110,7 @@ export class DirectDebitsService {
     })
   }
 
-  async validateClabe({ clabe, idSocketIo, rfc }: ValidateClabeDto) {
+  async validateClabe({ clabe, idSocketIo, rfc, idOrden }: ValidateClabeDto) {
     try {
       const headers = {
         accept: 'application/json',
@@ -138,12 +144,15 @@ export class DirectDebitsService {
         throw new BadRequestException('La cuenta CLABE o el RFC no son válidos')
       }
 
-      await this.sqlService.query(this.createVerificacionToku, {
+      const queryParams = {
         clabeIntroducida: clabe,
         rfcIntroducido: rfc,
         idEvento: tokuResponse.data.id_bank_account_verification,
-        idSocketIo
-      })
+        idSocketIo,
+        idOrden
+      }
+
+      await this.sqlService.query(this.createVerificacionToku, queryParams)
 
       return { message: 'Proceso de validación iniciado' }
     } catch (error) {
@@ -206,9 +215,9 @@ export class DirectDebitsService {
     }
 
     const eventPayload = {
-      valid: verificacionToku.validacion === 'SUCCESS',
+      valid: dto.bank_account_verification.validation === 'SUCCESS',
       message:
-        verificacionToku.validacion === 'SUCCESS'
+        dto.bank_account_verification.validation === 'SUCCESS'
           ? 'La validación ha sido exitosa'
           : 'La CLABE no coincide con tu RFC'
     }
@@ -255,7 +264,7 @@ export class DirectDebitsService {
     }
 
     try {
-      const publicUrl = this.uploadFileToS3(params)
+      const publicUrl = await this.uploadFileToS3(params)
 
       const queryParams = {
         idOrden,

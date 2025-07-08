@@ -1,4 +1,4 @@
-import { IsString, Length } from 'class-validator'
+import { IsInt, IsString, Length } from 'class-validator'
 
 export class ValidateClabeDto {
   @IsString()
@@ -10,4 +10,7 @@ export class ValidateClabeDto {
 
   @IsString()
   rfc: string
+
+  @IsInt()
+  idOrden: number
 }
