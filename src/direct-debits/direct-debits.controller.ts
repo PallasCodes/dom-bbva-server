@@ -14,12 +14,17 @@ import { Response } from 'express'
 import { DirectDebitsService } from './direct-debits.service'
 import { SaveDirectDebitDto } from './dto/save-direct-debit.dto'
 import { TokuWebhookRequestDto } from './dto/toku-webhook-request.dto'
-import { ValidateClabeDto } from './dto/validate-clabe.dto'
 import { UploadSignatureDto } from './dto/upload-signature-dto'
+import { ValidateClabeDto } from './dto/validate-clabe.dto'
 
 @Controller('direct-debits')
 export class DirectDebitsController {
   constructor(private readonly directDebitsService: DirectDebitsService) {}
+
+  @Get('/:idOrden')
+  get(@Param('idOrden') idOrden: number) {
+    return this.directDebitsService.getDirectDebitByIdOrden(idOrden)
+  }
 
   @Post()
   save(@Body() dto: SaveDirectDebitDto) {

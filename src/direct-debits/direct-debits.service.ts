@@ -37,6 +37,8 @@ export class DirectDebitsService {
   private readonly updateVerificacionToku: string
   private readonly saveDirectDebit: string
   private readonly createDocumentoOrden: string
+  private readonly getDirectDebit: string
+
   private readonly digitalSignature = 4202
   // private readonly directDebit = 4251
   private readonly directDebit = 4239
@@ -82,6 +84,11 @@ export class DirectDebitsService {
       'utf8'
     )
 
+    this.getDirectDebit = fs.readFileSync(
+      path.join(__dirname, 'queries', 'get-direct-debit.sql'),
+      'utf8'
+    )
+
     this.s3 = new S3Client({
       region: configService.get('AWS_REGION') as string,
       credentials: {
@@ -91,6 +98,16 @@ export class DirectDebitsService {
     })
 
     this.bucket = configService.get('AWS_S3_BUCKET') as string
+  }
+
+  async getDirectDebitByIdOrden(idOrden: number) {
+    const [result] = await this.sqlService.query(this.getDirectDebit, { idOrden })
+
+    if (!result) {
+      throw new BadRequestException('Crédito no encontrado')
+    }
+
+    return result
   }
 
   async save(dto: SaveDirectDebitDto) {
