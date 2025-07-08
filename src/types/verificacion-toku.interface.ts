@@ -16,4 +16,5 @@ export interface VerificacionToku {
   fromV3?: boolean | null // bit, nullable
   procesoDom?: boolean | null // bit, nullable
   idSocketIo: string
+  idOrden?: string
 }

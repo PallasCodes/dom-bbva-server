@@ -1,7 +1,6 @@
 import * as fs from 'fs'
 import * as path from 'path'
 
-import { ObjectCannedACL, PutObjectCommand, S3Client } from '@aws-sdk/client-s3'
 import {
   BadRequestException,
   Injectable,
@@ -10,9 +9,17 @@ import {
   NotFoundException
 } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
-import axios from 'axios'
 
+import {
+  ObjectCannedACL,
+  PutObjectCommand,
+  PutObjectCommandInput,
+  S3Client
+} from '@aws-sdk/client-s3'
+import axios from 'axios'
 import puppeteer from 'puppeteer'
+
+import { directDebitTemplate } from 'src/reports/direct-debit.report'
 import { SqlService } from '../database/sql.service'
 import { VerificacionToku } from '../types/verificacion-toku.interface'
 import { WebsocketService } from '../websocket/websocket.service'
@@ -20,7 +27,6 @@ import { SaveDirectDebitDto } from './dto/save-direct-debit.dto'
 import { TokuWebhookRequestDto } from './dto/toku-webhook-request.dto'
 import { UploadSignatureDto } from './dto/upload-signature-dto'
 import { ValidateClabeDto } from './dto/validate-clabe.dto'
-import { directDebitTemplate } from 'src/reports/direct-debit.report'
 
 @Injectable()
 export class DirectDebitsService {
@@ -32,6 +38,7 @@ export class DirectDebitsService {
   private readonly saveDirectDebit: string
   private readonly createDocumentoOrden: string
   private readonly digitalSignature = 4202
+  private readonly directDebit = 4251
 
   private readonly s3: S3Client
   private readonly bucket: string
@@ -163,6 +170,8 @@ export class DirectDebitsService {
 
     if (!verificacionToku.procesoDom) return
 
+    const { idOrden } = verificacionToku
+
     const { bank_account_verification: toku } = dto
     const { voucher_information: voucher } = toku
 
@@ -182,12 +191,34 @@ export class DirectDebitsService {
 
     await this.sqlService.query(this.updateVerificacionToku, verificacionTokuPayload)
 
+    const pdfBuffer = await this.getDirectDebitDocument(idOrden as unknown as number)
+
+    const codeName = `${idOrden}.${this.directDebit}`
+    const fileName = `${codeName}.${new Date().getTime()}.pdf`
+    const key = `${new Date().getFullYear()}/${idOrden}/${fileName}`
+
+    const params: PutObjectCommandInput = {
+      Bucket: this.bucket,
+      Key: key,
+      Body: pdfBuffer,
+      ContentType: 'application/pdf',
+      ACL: ObjectCannedACL.public_read
+    }
+
     const eventPayload = {
       valid: verificacionToku.validacion === 'SUCCESS',
       message:
         verificacionToku.validacion === 'SUCCESS'
           ? 'La validación ha sido exitosa'
           : 'La CLABE no coincide con tu RFC'
+    }
+
+    try {
+      const pdfUrl = await this.uploadFileToS3(params)
+      Object.assign(eventPayload, { ...eventPayload, pdfUrl })
+    } catch (error) {
+      this.logger.error('Error uploading file to S3', error)
+      throw new InternalServerErrorException('Error al guardar archivo')
     }
 
     this.websocketService.emitToClient(
@@ -199,7 +230,18 @@ export class DirectDebitsService {
     return { message: 'Proceso de validación finalizado' }
   }
 
+  async uploadFileToS3(params: PutObjectCommandInput) {
+    try {
+      await this.s3.send(new PutObjectCommand(params))
+      return `https://s3.amazonaws.com/${this.bucket}/${params.Key}`
+    } catch (error) {
+      this.logger.error('Error uploading file to S3', error)
+      throw new InternalServerErrorException('Error al guardar archivo')
+    }
+  }
+
   async uploadSignature(file: Express.Multer.File, { idOrden }: UploadSignatureDto) {
+    // TODO: check if signature already exists, if it does, just update it in s3 and in the db
     const codeName = `${idOrden}.${this.digitalSignature}`
     const extension = path.extname(file.originalname)
     const fileName = `${codeName}.${new Date().getTime()}${extension}`
@@ -213,8 +255,7 @@ export class DirectDebitsService {
     }
 
     try {
-      await this.s3.send(new PutObjectCommand(params))
-      const publicUrl = `https://s3.amazonaws.com/${this.bucket}/${key}`
+      const publicUrl = this.uploadFileToS3(params)
 
       const queryParams = {
         idOrden,
@@ -233,7 +274,7 @@ export class DirectDebitsService {
     }
   }
 
-  async getDirectDebitDocument(idOrden: number) {
+  async getDirectDebitDocument(idOrden: number): Promise<Uint8Array<ArrayBufferLike>> {
     const [result] = await this.sqlService.query(
       `EXEC dbo.sp_jasper_domiciliacionBBVA @idOrden = ${idOrden}`
     )
