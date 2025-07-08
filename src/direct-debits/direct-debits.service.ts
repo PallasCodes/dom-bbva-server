@@ -40,8 +40,7 @@ export class DirectDebitsService {
   private readonly getDirectDebit: string
 
   private readonly digitalSignature = 4202
-  // private readonly directDebit = 4251
-  private readonly directDebit = 4239
+  private readonly directDebit: number
 
   private readonly s3: S3Client
   private readonly bucket: string
@@ -52,6 +51,8 @@ export class DirectDebitsService {
     private readonly sqlService: SqlService,
     private readonly websocketService: WebsocketService
   ) {
+    this.directDebit = this.configService.get<string>('ENV') === 'dev' ? 4239 : 4251
+
     this.TOKU_KEY = this.configService.get<string>('TOKU_KEY')
 
     this.updateProcessStep = fs.readFileSync(
