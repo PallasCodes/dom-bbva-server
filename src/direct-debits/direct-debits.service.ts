@@ -241,6 +241,35 @@ export class DirectDebitsService {
       throw new NotFoundException('No se encontró la información de tu credito')
     }
 
+    result.tokentarjeta01 = 1
+    result.tokentarjeta02 = 3
+    result.tokentarjeta03 = 3
+    result.tokentarjeta04 = 3
+    result.tokentarjeta05 = 3
+    result.tokentarjeta06 = 3
+    result.tokentarjeta07 = 3
+    result.tokentarjeta08 = 3
+    result.tokentarjeta09 = 3
+    result.tokentarjeta10 = 3
+    result.tokentarjeta11 = 3
+    result.tokentarjeta12 = 3
+    result.tokentarjeta13 = 3
+    result.tokentarjeta14 = 3
+    result.tokentarjeta15 = 3
+    result.tokentarjeta16 = 3
+
+    const periodicidadX = {
+      SEMANAL: '70px',
+      CATORCENAL: '177px',
+      QUINCENAL: '284px',
+      MENSUAL: '390px',
+      BIMESTRAL: '497px',
+      SEMESTRAL: '604px',
+      ANUAL: '710px'
+    }
+
+    const periodicidadXPos = periodicidadX[(result.periodicidad as string).toUpperCase()]
+
     const imagePath = 'C:/Users/siste/Downloads/domicliacion_fimubac.jpg'
     const base64Image = fs.readFileSync(imagePath).toString('base64')
     const imageMimeType = 'image/jpeg'
@@ -284,7 +313,7 @@ export class DirectDebitsService {
         <p style="top: 157px; left: 76px;">GB PLUS S.A. DE C.V. SOFOM E.N.R.</p>
         <p style="top: 301px; left: 76px;">${result.banco}</p>
 
-        <p style="top: 621px; left: 50px;">${result.deudor}</p>
+        <p style="top: 621px; left: 56px;">${result.deudor}</p>
         <p style="top: 476px; left: 490px;">${result.pagos}</p>
 
         <p style="top: 998px; left: 50px;">${result.deudor}</p>
@@ -292,6 +321,58 @@ export class DirectDebitsService {
         <div style="top: 570px; left: 480px; width: 160px; position: absolute;">
           <img style="width: 100%; height: auto;" src="${result.Firmadigitalizada}" />
         </div>
+
+        <p style="top: 252px; left: ${periodicidadXPos};">X</p>
+
+        <p style="top: 358px; left: 445px;">${result.tokentarjeta01}</p>
+        <p style="top: 358px; left: 465px;">${result.tokentarjeta02}</p>
+        <p style="top: 358px; left: 484px;">${result.tokentarjeta03}</p>
+        <p style="top: 358px; left: 503px;">${result.tokentarjeta04}</p>
+
+        <p style="top: 358px; left: 528px;">${result.tokentarjeta05}</p>
+        <p style="top: 358px; left: 547px;">${result.tokentarjeta06}</p>
+        <p style="top: 358px; left: 567px;">${result.tokentarjeta07}</p>
+        <p style="top: 358px; left: 586px;">${result.tokentarjeta08}</p>
+
+        <p style="top: 358px; left: 611px;">${result.tokentarjeta09}</p>
+        <p style="top: 358px; left: 630px;">${result.tokentarjeta10}</p>
+        <p style="top: 358px; left: 649px;">${result.tokentarjeta11}</p>
+        <p style="top: 358px; left: 669px;">${result.tokentarjeta12}</p>
+
+        <p style="top: 358px; left: 694px;">${result.tokentarjeta13}</p>
+        <p style="top: 358px; left: 714px;">${result.tokentarjeta14}</p>
+        <p style="top: 358px; left: 732px;">${result.tokentarjeta15}</p>
+        <p style="top: 358px; left: 752px;">${result.tokentarjeta16}</p>
+
+        <p style="top: 391px; left: 445px;">${result.tokenclabe01}</p>
+        <p style="top: 391px; left: 465px;">${result.tokenclabe02}</p>
+        <p style="top: 391px; left: 485px;">${result.tokenclabe03}</p>
+        <p style="top: 391px; left: 504px;">${result.tokenclabe04}</p>
+        <p style="top: 391px; left: 524px;">${result.tokenclabe05}</p>
+        <p style="top: 391px; left: 542px;">${result.tokenclabe06}</p>
+        <p style="top: 391px; left: 562px;">${result.tokenclabe07}</p>
+        <p style="top: 391px; left: 582px;">${result.tokenclabe08}</p>
+        <p style="top: 391px; left: 602px;">${result.tokenclabe09}</p>
+        <p style="top: 391px; left: 622px;">${result.tokenclabe10}</p>
+        <p style="top: 391px; left: 642px;">${result.tokenclabe11}</p>
+        <p style="top: 391px; left: 661px;">${result.tokenclabe12}</p>
+        <p style="top: 391px; left: 680px;">${result.tokenclabe13}</p>
+        <p style="top: 391px; left: 699px;">${result.tokenclabe14}</p>
+        <p style="top: 391px; left: 719px;">${result.tokenclabe15}</p>
+        <p style="top: 391px; left: 739px;">${result.tokenclabe16}</p>
+        <p style="top: 391px; left: 758px;">${result.tokenclabe17}</p>
+        <p style="top: 391px; left: 778px;">${result.tokenclabe18}</p>
+
+        <p style="top: 425px; left: 445px;">${result.tokentelefono01}</p>
+        <p style="top: 425px; left: 465px;">${result.tokentelefono02}</p>
+        <p style="top: 425px; left: 485px;">${result.tokentelefono03}</p>
+        <p style="top: 425px; left: 504px;">${result.tokentelefono04}</p>
+        <p style="top: 425px; left: 524px;">${result.tokentelefono05}</p>
+        <p style="top: 425px; left: 542px;">${result.tokentelefono06}</p>
+        <p style="top: 425px; left: 562px;">${result.tokentelefono07}</p>
+        <p style="top: 425px; left: 582px;">${result.tokentelefono08}</p>
+        <p style="top: 425px; left: 602px;">${result.tokentelefono09}</p>
+        <p style="top: 425px; left: 622px;">${result.tokentelefono10}</p>
 
         <div style="top: 944px; left: 480px; width: 160px; position: absolute;">
           <img style="width: 100%; height: auto;" src="${result.Firmadigitalizada}" />
