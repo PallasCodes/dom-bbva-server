@@ -13,12 +13,8 @@ BEGIN
     apellidoMaterno = @apellidoMaterno,
     rfc = @rfc,
     curp = @curp,
-    idNacionalidad = @idNacionalidad,
-    idEstadoCivil = @idEstadoCivil,
-    dependientes = @dependientes,
     sexo = @sexo,
-    clabe = @clabe,
-    urlFirma = @urlFirma
+    clabe = @clabe
   WHERE idSolicitudDomiciliacion = @idSolicitudDomiciliacion
 END
 ELSE
@@ -26,12 +22,10 @@ BEGIN
   -- Si no existe: inserta
   INSERT INTO dbo.infoDomiciliacion (
     nombre1, nombre2, apellidoPaterno, apellidoMaterno,
-    rfc, curp, idNacionalidad, idEstadoCivil, dependientes,
-    sexo, clabe, urlFirma, idSolicitudDomiciliacion
+    rfc, curp, sexo, clabe, idSolicitudDomiciliacion
   )
   VALUES (
     @nombre1, @nombre2, @apellidoPaterno, @apellidoMaterno,
-    @rfc, @curp, @idNacionalidad, @idEstadoCivil, @dependientes,
-    @sexo, @clabe, @urlFirma, @idSolicitudDomiciliacion
+    @rfc, @curp, @sexo, @clabe, @idSolicitudDomiciliacion
   )
 END

@@ -6,8 +6,7 @@ import {
   IsOptional,
   IsString,
   Length,
-  Matches,
-  Min
+  Matches
 } from 'class-validator'
 
 export class SaveDirectDebitDto {
@@ -39,19 +38,6 @@ export class SaveDirectDebitDto {
   })
   curp: string
 
-  @Type(() => Number)
-  @IsInt()
-  idNacionalidad: number
-
-  @Type(() => Number)
-  @IsInt()
-  idEstadoCivil: number
-
-  @Type(() => Number)
-  @IsInt()
-  @Min(0)
-  dependientes: number
-
   @IsString()
   @Length(1, 1)
   @IsIn(['M', 'F'], { message: 'Sexo debe ser M o F' })
@@ -63,10 +49,6 @@ export class SaveDirectDebitDto {
     message: 'CLABE inválida: debe empezar con 012 y tener 18 dígitos'
   })
   clabe: string
-
-  @IsString()
-  @Length(1, 500)
-  urlFirma: string
 
   @Type(() => Number)
   @IsInt()
