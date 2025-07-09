@@ -9,7 +9,7 @@ import { Server } from 'socket.io'
   },
   transports: ['websocket'],
   namespace: '/dom-bbva',
-  path: '/socket.io'
+  path: '/dom-bbva/socket.io'
 })
 export class WebsocketGateway {
   @WebSocketServer()
