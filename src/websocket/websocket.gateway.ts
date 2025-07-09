@@ -8,7 +8,8 @@ import { Server } from 'socket.io'
     credentials: true
   },
   transports: ['websocket'],
-  namespace: '/dom-bbva'
+  namespace: '/dom-bbva',
+  path: '/socket.io'
 })
 export class WebsocketGateway {
   @WebSocketServer()
