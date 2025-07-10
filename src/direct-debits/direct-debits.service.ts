@@ -118,9 +118,7 @@ export class DirectDebitsService {
   async getDirectDebitByIdOrden(idOrden: number) {
     const [result] = await this.sqlService.query(this.getDirectDebit, { idOrden })
 
-    if (!result) {
-      throw new BadRequestException('Crédito no encontrado')
-    }
+    if (!result) throw new NotFoundException('Crédito no encontrado')
 
     return result
   }
@@ -145,17 +143,11 @@ export class DirectDebitsService {
   async validateClabe({ clabe, idSocketIo, rfc, idOrden }: ValidateClabeDto) {
     try {
       const numTries = await this.getValidationTries(idOrden)
-      if (numTries >= 3) {
-        throw new BadRequestException({
-          code: ValidateClabeError.VALIDATION_TRIES_LIMIT_REACHED,
-          message:
-            'Has excedido el límite de intentos de validación de CLABE, inténtalo en 24 hrs'
-        })
-      }
-
-      const verificationId = await this.verifyClabeWithToku(clabe, rfc)
+      if (numTries >= 3) this.throwLimitReached()
 
       await this.sqlService.query(this.createValidationTry, { idOrden })
+
+      const verificationId = await this.verifyClabeWithToku(clabe, rfc, numTries)
 
       await this.sqlService.query(this.createVerificacionToku, {
         clabeIntroducida: clabe,
@@ -170,12 +162,9 @@ export class DirectDebitsService {
         numTries: numTries + 1
       }
     } catch (error) {
-      if (error instanceof BadRequestException) {
-        console.warn('BadRequestException:', error.message)
-        throw error
-      }
+      if (error instanceof BadRequestException) throw error
 
-      console.error('Unexpected error:', error)
+      this.logger.error('Unexpected error:', error)
       throw new InternalServerErrorException(
         'Ocurrió un error al validar tu cuenta, inténtalo más tarde'
       )
@@ -189,7 +178,18 @@ export class DirectDebitsService {
     return result?.numTries || 0
   }
 
-  private async verifyClabeWithToku(clabe: string, rfc: string): Promise<string> {
+  private throwLimitReached() {
+    throw new BadRequestException({
+      code: ValidateClabeError.VALIDATION_TRIES_LIMIT_REACHED,
+      message: 'Has excedido el límite de intentos de validación, inténtalo en 24 hrs'
+    })
+  }
+
+  private async verifyClabeWithToku(
+    clabe: string,
+    rfc: string,
+    numTries: number
+  ): Promise<string> {
     try {
       const { data } = await axios.post(
         'https://api.trytoku.com/bank-account-verification',
@@ -200,14 +200,16 @@ export class DirectDebitsService {
             'content-type': 'application/json',
             'x-api-key': this.TOKU_KEY
           },
-          timeout: 5000 // recomendable agregar timeout
+          timeout: 5000
         }
       )
 
       if (!data || data.message !== 'OK' || !data.id_bank_account_verification) {
+        if (numTries + 1 >= 3) this.throwLimitReached()
+
         throw new BadRequestException({
           code: ValidateClabeError.INVALID_CLABE_OR_RFC,
-          message: 'La cuenta CLABE o el RFC no son válidos'
+          message: `La cuenta CLABE o el RFC no son válidos. Intento ${numTries + 1} de 3`
         })
       }
 
@@ -215,9 +217,11 @@ export class DirectDebitsService {
     } catch (error) {
       if (isAxiosError(error)) {
         if (error.response?.data?.error === 'Invalid CLABE') {
+          if (numTries + 1 >= 3) this.throwLimitReached()
+
           throw new BadRequestException({
             code: ValidateClabeError.INVALID_CLABE,
-            message: 'La cuenta CLABE no es válida'
+            message: `La cuenta CLABE no es válida. Intento ${numTries + 1} de 3`
           })
         }
 
