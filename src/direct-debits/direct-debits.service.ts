@@ -16,7 +16,7 @@ import {
   PutObjectCommandInput,
   S3Client
 } from '@aws-sdk/client-s3'
-import axios from 'axios'
+import axios, { AxiosError, isAxiosError } from 'axios'
 import puppeteer from 'puppeteer'
 
 import { directDebitTemplate } from 'src/reports/direct-debit.report'
@@ -27,6 +27,8 @@ import { SaveDirectDebitDto } from './dto/save-direct-debit.dto'
 import { TokuWebhookRequestDto } from './dto/toku-webhook-request.dto'
 import { UploadSignatureDto } from './dto/upload-signature-dto'
 import { ValidateClabeDto } from './dto/validate-clabe.dto'
+import { ValidateClabeError } from 'src/types/enums/validate-clabe-error.enum'
+import { GenericResponseError } from 'src/types/enums/generic-response-error.enum'
 
 @Injectable()
 export class DirectDebitsService {
@@ -38,6 +40,8 @@ export class DirectDebitsService {
   private readonly saveDirectDebit: string
   private readonly createDocumentoOrden: string
   private readonly getDirectDebit: string
+  private readonly createValidationTry: string
+  private readonly getNumTokuValidationTries: string
 
   private readonly digitalSignature = 4202
   private readonly directDebit: number
@@ -90,6 +94,16 @@ export class DirectDebitsService {
       'utf8'
     )
 
+    this.createValidationTry = fs.readFileSync(
+      path.join(__dirname, 'queries', 'create-intento-validacion-toku.sql'),
+      'utf8'
+    )
+
+    this.getNumTokuValidationTries = fs.readFileSync(
+      path.join(__dirname, 'queries', 'get-num-toku-validation-tries.sql'),
+      'utf8'
+    )
+
     this.s3 = new S3Client({
       region: configService.get('AWS_REGION') as string,
       credentials: {
@@ -130,56 +144,90 @@ export class DirectDebitsService {
 
   async validateClabe({ clabe, idSocketIo, rfc, idOrden }: ValidateClabeDto) {
     try {
-      const headers = {
-        accept: 'application/json',
-        'content-type': 'application/json',
-        'x-api-key': this.TOKU_KEY
-      }
-      const body = {
-        account_number: clabe,
-        customer_identifier: rfc
-      }
-
-      const tokuResponse = await axios.post(
-        'https://api.trytoku.com/bank-account-verification',
-        body,
-        { headers }
-      )
-
-      if (!tokuResponse.data) {
-        throw new BadRequestException(
-          'Ocurrió un error al validar tu cuenta, inténtalo más tarde'
-        )
-      }
-      if (tokuResponse.data.error === 'Invalid CLABE') {
-        throw new BadRequestException('La cuenta CLABE no es válida')
-      }
-      if (
-        tokuResponse.data.error ||
-        tokuResponse.data.message !== 'OK' ||
-        !tokuResponse.data.id_bank_account_verification
-      ) {
-        throw new BadRequestException('La cuenta CLABE o el RFC no son válidos')
+      const numTries = await this.getValidationTries(idOrden)
+      if (numTries >= 3) {
+        throw new BadRequestException({
+          code: ValidateClabeError.VALIDATION_TRIES_LIMIT_REACHED,
+          message:
+            'Has excedido el límite de intentos de validación de CLABE, inténtalo en 24 hrs'
+        })
       }
 
-      const queryParams = {
+      const verificationId = await this.verifyClabeWithToku(clabe, rfc)
+
+      await this.sqlService.query(this.createValidationTry, { idOrden })
+
+      await this.sqlService.query(this.createVerificacionToku, {
         clabeIntroducida: clabe,
         rfcIntroducido: rfc,
-        idEvento: tokuResponse.data.id_bank_account_verification,
+        idEvento: verificationId,
         idSocketIo,
         idOrden
+      })
+
+      return {
+        message: 'Proceso de validación iniciado',
+        numTries: numTries + 1
       }
-
-      await this.sqlService.query(this.createVerificacionToku, queryParams)
-
-      return { message: 'Proceso de validación iniciado' }
     } catch (error) {
-      if (error.response.data.error === 'Invalid CLABE') {
-        throw new BadRequestException('La cuenta CLABE no es válida')
+      if (error instanceof BadRequestException) {
+        console.warn('BadRequestException:', error.message)
+        throw error
       }
-      throw new BadRequestException(
+
+      console.error('Unexpected error:', error)
+      throw new InternalServerErrorException(
         'Ocurrió un error al validar tu cuenta, inténtalo más tarde'
       )
+    }
+  }
+
+  private async getValidationTries(idOrden: number): Promise<number> {
+    const [result] = await this.sqlService.query(this.getNumTokuValidationTries, {
+      idOrden
+    })
+    return result?.numTries || 0
+  }
+
+  private async verifyClabeWithToku(clabe: string, rfc: string): Promise<string> {
+    try {
+      const { data } = await axios.post(
+        'https://api.trytoku.com/bank-account-verification',
+        { account_number: clabe, customer_identifier: rfc },
+        {
+          headers: {
+            accept: 'application/json',
+            'content-type': 'application/json',
+            'x-api-key': this.TOKU_KEY
+          },
+          timeout: 5000 // recomendable agregar timeout
+        }
+      )
+
+      if (!data || data.message !== 'OK' || !data.id_bank_account_verification) {
+        throw new BadRequestException({
+          code: ValidateClabeError.INVALID_CLABE_OR_RFC,
+          message: 'La cuenta CLABE o el RFC no son válidos'
+        })
+      }
+
+      return data.id_bank_account_verification
+    } catch (error) {
+      if (isAxiosError(error)) {
+        if (error.response?.data?.error === 'Invalid CLABE') {
+          throw new BadRequestException({
+            code: ValidateClabeError.INVALID_CLABE,
+            message: 'La cuenta CLABE no es válida'
+          })
+        }
+
+        throw new BadRequestException({
+          code: GenericResponseError.THIRD_PARTY_ERROR,
+          message: 'Error al validar la cuenta con el proveedor externo'
+        })
+      }
+
+      throw error
     }
   }
 
