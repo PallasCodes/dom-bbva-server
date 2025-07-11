@@ -249,8 +249,6 @@ export class DirectDebitsService {
 
     if (!verificacionToku.procesoDom) return
 
-    const { idOrden } = verificacionToku
-
     const { bank_account_verification: toku } = dto
     const { voucher_information: voucher } = toku
 
@@ -270,40 +268,12 @@ export class DirectDebitsService {
 
     await this.sqlService.query(this.updateVerificacionToku, verificacionTokuPayload)
 
-    const [directDebit] = await this.sqlService.query(this.getDirectDebit, { idOrden })
-
-    const pdfBuffer = await this.getDirectDebitDocument(
-      Number(idOrden),
-      directDebit.geoLongitud,
-      directDebit.geoLatitud
-    )
-
-    const codeName = `${idOrden}.${this.directDebit}`
-    const fileName = `${codeName}.${new Date().getTime()}.pdf`
-    const key = `${new Date().getFullYear()}/${idOrden}/${fileName}`
-
-    const params: PutObjectCommandInput = {
-      Bucket: this.bucket,
-      Key: key,
-      Body: pdfBuffer,
-      ContentType: 'application/pdf',
-      ACL: ObjectCannedACL.public_read
-    }
-
     const eventPayload = {
       valid: dto.bank_account_verification.validation === 'SUCCESS',
       message:
         dto.bank_account_verification.validation === 'SUCCESS'
           ? 'La validación ha sido exitosa'
           : 'La CLABE no coincide con tu RFC'
-    }
-
-    try {
-      const pdfUrl = await this.uploadFileToS3(params)
-      Object.assign(eventPayload, { ...eventPayload, pdfUrl })
-    } catch (error) {
-      this.logger.error('Error uploading file to S3', error)
-      throw new InternalServerErrorException('Error al guardar archivo')
     }
 
     this.websocketService.emitToClient(
@@ -313,6 +283,39 @@ export class DirectDebitsService {
     )
 
     return { message: 'Proceso de validación finalizado' }
+  }
+
+  async generateDirectDebitPdf({
+    idOrden,
+    latitude,
+    longitude
+  }: UploadSignatureDto): Promise<string> {
+    try {
+      const pdfBuffer = await this.getDirectDebitDocument({
+        idOrden: Number(idOrden),
+        latitude,
+        longitude
+      })
+
+      const codeName = `${idOrden}.${this.directDebit}`
+      const fileName = `${codeName}.${new Date().getTime()}.pdf`
+      const key = `${new Date().getFullYear()}/${idOrden}/${fileName}`
+
+      const params: PutObjectCommandInput = {
+        Bucket: this.bucket,
+        Key: key,
+        Body: pdfBuffer,
+        ContentType: 'application/pdf',
+        ACL: ObjectCannedACL.public_read
+      }
+
+      const pdfUrl = await this.uploadFileToS3(params)
+
+      return pdfUrl
+    } catch (error) {
+      this.logger.error('Error uploading file to S3', error)
+      throw new InternalServerErrorException('Error al guardar archivo')
+    }
   }
 
   async uploadFileToS3(params: PutObjectCommandInput) {
@@ -325,7 +328,10 @@ export class DirectDebitsService {
     }
   }
 
-  async uploadSignature(file: Express.Multer.File, { idOrden }: UploadSignatureDto) {
+  async uploadSignature(
+    file: Express.Multer.File,
+    { idOrden, latitude, longitude }: UploadSignatureDto
+  ) {
     const codeName = `${idOrden}.${this.digitalSignature}`
     const extension = path.extname(file.originalname)
     const fileName = `${codeName}.${new Date().getTime()}${extension}`
@@ -351,18 +357,20 @@ export class DirectDebitsService {
       }
       await this.sqlService.query(this.createDocumentoOrden, queryParams)
 
-      return { message: 'Firma digital guardada correctamente' }
+      const pdfUrl = await this.generateDirectDebitPdf({ idOrden, latitude, longitude })
+
+      return { message: 'Firma digital guardada correctamente', pdfUrl }
     } catch (error) {
       this.logger.error('Error uploading file to S3', error)
       throw new InternalServerErrorException('Error al guardar la firma digital')
     }
   }
 
-  async getDirectDebitDocument(
-    idOrden: number,
-    geoLongitud: number,
-    geoLatitud: number
-  ): Promise<Uint8Array<ArrayBufferLike>> {
+  async getDirectDebitDocument({
+    idOrden,
+    latitude,
+    longitude
+  }: UploadSignatureDto): Promise<Uint8Array<ArrayBufferLike>> {
     const [result] = await this.sqlService.query(
       `EXEC dbo.sp_jasper_domiciliacionBBVA @idOrden = ${idOrden}`
     )
@@ -371,7 +379,7 @@ export class DirectDebitsService {
       throw new NotFoundException('No se encontró la información de tu credito')
     }
 
-    result.seal = `idOrden=${idOrden}|geoLatitud=${geoLatitud}|geoLongitud=${geoLongitud}`
+    result.seal = `idOrden=${idOrden}|geoLatitud=${latitude}|geoLongitud=${longitude}`
 
     const html = directDebitTemplate(result)
     const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox'] })
