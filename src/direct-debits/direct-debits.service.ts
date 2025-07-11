@@ -16,19 +16,19 @@ import {
   PutObjectCommandInput,
   S3Client
 } from '@aws-sdk/client-s3'
-import axios, { AxiosError, isAxiosError } from 'axios'
+import axios, { isAxiosError } from 'axios'
 import puppeteer from 'puppeteer'
 
-import { directDebitTemplate } from 'src/reports/direct-debit.report'
+import { ValidateClabeError } from 'src/types/enums/validate-clabe-error.enum'
 import { SqlService } from '../database/sql.service'
+import { directDebitTemplate } from '../reports/direct-debit.report'
+import { GenericResponseError } from '../types/enums/generic-response-error.enum'
 import { VerificacionToku } from '../types/verificacion-toku.interface'
 import { WebsocketService } from '../websocket/websocket.service'
 import { SaveDirectDebitDto } from './dto/save-direct-debit.dto'
 import { TokuWebhookRequestDto } from './dto/toku-webhook-request.dto'
 import { UploadSignatureDto } from './dto/upload-signature-dto'
 import { ValidateClabeDto } from './dto/validate-clabe.dto'
-import { ValidateClabeError } from 'src/types/enums/validate-clabe-error.enum'
-import { GenericResponseError } from 'src/types/enums/generic-response-error.enum'
 
 @Injectable()
 export class DirectDebitsService {
@@ -270,7 +270,13 @@ export class DirectDebitsService {
 
     await this.sqlService.query(this.updateVerificacionToku, verificacionTokuPayload)
 
-    const pdfBuffer = await this.getDirectDebitDocument(idOrden as unknown as number)
+    const [directDebit] = await this.sqlService.query(this.getDirectDebit, { idOrden })
+
+    const pdfBuffer = await this.getDirectDebitDocument(
+      Number(idOrden),
+      directDebit.geoLongitud,
+      directDebit.geoLatitud
+    )
 
     const codeName = `${idOrden}.${this.directDebit}`
     const fileName = `${codeName}.${new Date().getTime()}.pdf`
@@ -320,7 +326,6 @@ export class DirectDebitsService {
   }
 
   async uploadSignature(file: Express.Multer.File, { idOrden }: UploadSignatureDto) {
-    // TODO: check if signature already exists, if it does, just update it in s3 and in the db
     const codeName = `${idOrden}.${this.digitalSignature}`
     const extension = path.extname(file.originalname)
     const fileName = `${codeName}.${new Date().getTime()}${extension}`
@@ -353,7 +358,11 @@ export class DirectDebitsService {
     }
   }
 
-  async getDirectDebitDocument(idOrden: number): Promise<Uint8Array<ArrayBufferLike>> {
+  async getDirectDebitDocument(
+    idOrden: number,
+    geoLongitud: number,
+    geoLatitud: number
+  ): Promise<Uint8Array<ArrayBufferLike>> {
     const [result] = await this.sqlService.query(
       `EXEC dbo.sp_jasper_domiciliacionBBVA @idOrden = ${idOrden}`
     )
@@ -361,6 +370,8 @@ export class DirectDebitsService {
     if (!result) {
       throw new NotFoundException('No se encontró la información de tu credito')
     }
+
+    result.seal = `idOrden=${idOrden}|geoLatitud=${geoLatitud}|geoLongitud=${geoLongitud}`
 
     const html = directDebitTemplate(result)
     const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox'] })

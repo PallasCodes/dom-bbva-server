@@ -49,14 +49,4 @@ export class DirectDebitsController {
   ) {
     return this.directDebitsService.uploadSignature(file, body)
   }
-
-  @Get('document/:idOrden')
-  async getDirectDebitDocument(@Param('idOrden') idOrden: number, @Res() res: Response) {
-    const pdf = await this.directDebitsService.getDirectDebitDocument(idOrden)
-    res.set({
-      'Content-Type': 'application/pdf',
-      'Content-Disposition': 'inline; filename="reporte.pdf"'
-    })
-    res.send(pdf)
-  }
 }

@@ -1,6 +1,8 @@
 import * as fs from 'fs'
 import * as path from 'path'
 
+import { encrypt } from '../utils/crypto.util'
+
 export const directDebitTemplate = (payload: any): string => {
   const periodicidadX = {
     SEMANAL: '70px',
@@ -17,6 +19,10 @@ export const directDebitTemplate = (payload: any): string => {
   const imagePath = path.join(__dirname, 'domiciliacion_fimubac.jpg')
   const base64Image = fs.readFileSync(imagePath).toString('base64')
   const imageMimeType = 'image/jpeg'
+
+  const timeStamp = new Date().toISOString().replace('T', ' ').replace('Z', '')
+
+  const encryptedSeal = encrypt(payload.seal)
 
   return `
     <!DOCTYPE html>
@@ -62,7 +68,7 @@ export const directDebitTemplate = (payload: any): string => {
 
         <p style="top: 998px; left: 50px;">${payload.deudor}</p>
 
-        <div style="top: 570px; left: 480px; width: 160px; position: absolute;">
+        <div style="top: 570px; left: 480px; width: 140px; position: absolute;">
           <img style="width: 100%; height: auto;" src="${payload.Firmadigitalizada}" />
         </div>
 
@@ -118,9 +124,20 @@ export const directDebitTemplate = (payload: any): string => {
         <p style="top: 425px; left: 602px;">${payload.tokentelefono09}</p>
         <p style="top: 425px; left: 622px;">${payload.tokentelefono10}</p>
 
-        <div style="top: 944px; left: 480px; width: 160px; position: absolute;">
+        <p style="top: 640px; left: 444px; font-size: 8px; font-weight: 500;">
+          Firmado electrónicamente por ${payload.deudor} el día ${timeStamp}
+        </p>
+        <p style="top: 1015px; left: 444px; font-size: 8px; font-weight: 500;">
+          Firmado electrónicamente por ${payload.deudor} el día ${timeStamp}
+        </p>
+
+        <div style="top: 944px; left: 480px; width: 140px; position: absolute;">
           <img style="width: 100%; height: auto;" src="${payload.Firmadigitalizada}" />
         </div>
+
+        <p style="bottom: -4px; left: 24px; right: 26px; overflow-wrap: break-word; font-size: 7px; font-weight: 400;">
+          ${encryptedSeal}
+        </p>
       </div>
     </body>
     </html>
