@@ -1,17 +1,21 @@
 import { WebSocketGateway, WebSocketServer } from '@nestjs/websockets'
 import { Server } from 'socket.io'
 
-@WebSocketGateway()
-// @WebSocketGateway({
-//   cors: {
-//     origin: process.env.WS_CORS,
-//     methods: ['GET', 'POST'],
-//     credentials: true
-//   },
-//   transports: ['websocket'],
-//   namespace: '/dom-bbva',
-//   path: '/dom-bbva/socket.io'
-// })
+const gatewayConfig =
+  process.env.ENV === 'prod'
+    ? {
+        cors: {
+          origin: process.env.WS_CORS,
+          methods: ['GET', 'POST'],
+          credentials: true
+        },
+        transports: ['websocket'],
+        namespace: '/dom-bbva',
+        path: '/dom-bbva/socket.io'
+      }
+    : {}
+
+@WebSocketGateway(gatewayConfig)
 export class WebsocketGateway {
   @WebSocketServer()
   server: Server
