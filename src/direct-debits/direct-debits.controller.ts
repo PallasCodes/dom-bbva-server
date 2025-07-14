@@ -4,12 +4,10 @@ import {
   Get,
   Param,
   Post,
-  Res,
   UploadedFile,
   UseInterceptors
 } from '@nestjs/common'
 import { FileInterceptor } from '@nestjs/platform-express'
-import { Response } from 'express'
 
 import { DirectDebitsService } from './direct-debits.service'
 import { SaveDirectDebitDto } from './dto/save-direct-debit.dto'
@@ -48,5 +46,10 @@ export class DirectDebitsController {
     @Body() body: UploadSignatureDto
   ) {
     return this.directDebitsService.uploadSignature(file, body)
+  }
+
+  @Post('sign/:idOrden')
+  signDirectDebitDoc(@Param('idOrden') idOrden: number) {
+    return this.directDebitsService.signDirectDebitDoc(idOrden)
   }
 }

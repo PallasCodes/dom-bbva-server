@@ -42,6 +42,7 @@ export class DirectDebitsService {
   private readonly getDirectDebit: string
   private readonly createValidationTry: string
   private readonly getNumTokuValidationTries: string
+  private readonly signDirectDebit: string
 
   private readonly digitalSignature = 4202
   private readonly directDebit: number
@@ -101,6 +102,11 @@ export class DirectDebitsService {
 
     this.getNumTokuValidationTries = fs.readFileSync(
       path.join(__dirname, 'queries', 'get-num-toku-validation-tries.sql'),
+      'utf8'
+    )
+
+    this.signDirectDebit = fs.readFileSync(
+      path.join(__dirname, 'queries', 'sign-direct-debit-doc.sql'),
       'utf8'
     )
 
@@ -394,5 +400,14 @@ export class DirectDebitsService {
 
     await browser.close()
     return pdfBuffer
+  }
+
+  async signDirectDebitDoc(idOrden: number) {
+    await this.getDirectDebitByIdOrden(idOrden)
+
+    await this.sqlService.query(this.signDirectDebit, { idOrden })
+
+    return { message: 'Documento firmado' }
+    // TODO: subir a edicom
   }
 }

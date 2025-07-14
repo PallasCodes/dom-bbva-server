@@ -24,7 +24,6 @@ export class SqlService implements OnModuleDestroy {
 
     try {
       this.pool = await sql.connect(this.dbConfig)
-      this.logger.log('✅ Conectado a SQL Server')
     } catch (error) {
       this.logger.error('❌ Error al conectar a SQL Server', error)
       throw new InternalServerErrorException('No se pudo conectar a la base de datos')
