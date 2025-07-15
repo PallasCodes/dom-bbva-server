@@ -29,6 +29,7 @@ import { SaveDirectDebitDto } from './dto/save-direct-debit.dto'
 import { TokuWebhookRequestDto } from './dto/toku-webhook-request.dto'
 import { UploadSignatureDto } from './dto/upload-signature-dto'
 import { ValidateClabeDto } from './dto/validate-clabe.dto'
+import { encrypt } from 'src/utils/crypto.util'
 
 @Injectable()
 export class DirectDebitsService {
@@ -43,6 +44,7 @@ export class DirectDebitsService {
   private readonly createValidationTry: string
   private readonly getNumTokuValidationTries: string
   private readonly signDirectDebit: string
+  private readonly saveSeal: string
 
   private readonly digitalSignature = 4202
   private readonly directDebit: number
@@ -107,6 +109,11 @@ export class DirectDebitsService {
 
     this.signDirectDebit = fs.readFileSync(
       path.join(__dirname, 'queries', 'sign-direct-debit-doc.sql'),
+      'utf8'
+    )
+
+    this.saveSeal = fs.readFileSync(
+      path.join(__dirname, 'queries', 'save-seal.sql'),
       'utf8'
     )
 
@@ -385,7 +392,14 @@ export class DirectDebitsService {
       throw new NotFoundException('No se encontró la información de tu credito')
     }
 
-    result.seal = `idOrden=${idOrden}|geoLatitud=${latitude}|geoLongitud=${longitude}`
+    const selloClear = `idOrden=${idOrden}|geoLatitud=${latitude}|geoLongitud=${longitude}`
+    result.encryptedSeal = encrypt(selloClear)
+
+    await this.sqlService.query(this.saveSeal, {
+      idOrden,
+      selloClear,
+      sello: result.encryptedSeal
+    })
 
     const html = directDebitTemplate(result)
     const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox'] })

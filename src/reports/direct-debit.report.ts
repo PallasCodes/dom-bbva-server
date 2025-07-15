@@ -1,8 +1,6 @@
 import * as fs from 'fs'
 import * as path from 'path'
 
-import { encrypt } from '../utils/crypto.util'
-
 export const directDebitTemplate = (payload: any): string => {
   const periodicidadX = {
     SEMANAL: '70px',
@@ -21,8 +19,6 @@ export const directDebitTemplate = (payload: any): string => {
   const imageMimeType = 'image/jpeg'
 
   const timeStamp = new Date().toISOString().replace('T', ' ').replace('Z', '')
-
-  const encryptedSeal = encrypt(payload.seal)
 
   return `
     <!DOCTYPE html>
@@ -136,7 +132,7 @@ export const directDebitTemplate = (payload: any): string => {
         </div>
 
         <p style="bottom: -4px; left: 24px; right: 26px; overflow-wrap: break-word; font-size: 7px; font-weight: 400;">
-          ${encryptedSeal}
+          ${payload.encryptedSeal}
         </p>
       </div>
     </body>
