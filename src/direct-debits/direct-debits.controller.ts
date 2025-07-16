@@ -49,7 +49,15 @@ export class DirectDebitsController {
   }
 
   @Post('sign/:idOrden')
-  signDirectDebitDoc(@Param('idOrden') idOrden: number) {
-    return this.directDebitsService.signDirectDebitDoc(idOrden)
+  signDirectDebitDoc(
+    @Param('idOrden') idOrden: number,
+    @Body('idSolicitudDom') idSolicitudDom: number
+  ) {
+    return this.directDebitsService.signDirectDebitDoc(idOrden, idSolicitudDom)
+  }
+
+  @Post('validate-loan/:idSolicitudDom')
+  validateLoan(@Param('idSolicitudDom') idSolicitudDom: number) {
+    return this.directDebitsService.updateStep(2, idSolicitudDom)
   }
 }

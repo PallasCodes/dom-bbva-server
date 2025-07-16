@@ -144,6 +144,7 @@ export class DirectDebitsService {
   async save(dto: SaveDirectDebitDto) {
     try {
       await this.sqlService.query(this.saveDirectDebit, dto)
+      await this.updateStep(3, dto.idSolicitudDomiciliacion)
 
       return { message: 'Información guardada' }
     } catch (err) {
@@ -151,11 +152,13 @@ export class DirectDebitsService {
     }
   }
 
-  updateStep(step: number, idSolicitudDom: number) {
-    this.sqlService.query(this.updateProcessStep, {
+  async updateStep(step: number, idSolicitudDom: number) {
+    await this.sqlService.query(this.updateProcessStep, {
       step,
       idSolicitudDom
     })
+
+    return { message: 'OK' }
   }
 
   async validateClabe({ clabe, idSocketIo, rfc, idOrden }: ValidateClabeDto) {
@@ -318,10 +321,14 @@ export class DirectDebitsService {
     idOrden,
     latitude,
     longitude
-  }: UploadSignatureDto): Promise<string> {
+  }: {
+    idOrden: number
+    latitude: number
+    longitude: number
+  }): Promise<string> {
     try {
       const pdfBuffer = await this.getDirectDebitDocument({
-        idOrden: Number(idOrden),
+        idOrden,
         latitude,
         longitude
       })
@@ -359,7 +366,7 @@ export class DirectDebitsService {
 
   async uploadSignature(
     file: Express.Multer.File,
-    { idOrden, latitude, longitude }: UploadSignatureDto
+    { idOrden, latitude, longitude, idSolicitudDom }: UploadSignatureDto
   ) {
     const codeName = `${idOrden}.${this.digitalSignature}`
     const extension = path.extname(file.originalname)
@@ -386,7 +393,13 @@ export class DirectDebitsService {
       }
       await this.sqlService.query(this.createDocumentoOrden, queryParams)
 
-      const pdfUrl = await this.generateDirectDebitPdf({ idOrden, latitude, longitude })
+      const pdfUrl = await this.generateDirectDebitPdf({
+        idOrden: +idOrden,
+        latitude: +latitude,
+        longitude: +longitude
+      })
+
+      await this.updateStep(4, +idSolicitudDom)
 
       return { message: 'Firma digital guardada correctamente', pdfUrl }
     } catch (error) {
@@ -399,7 +412,11 @@ export class DirectDebitsService {
     idOrden,
     latitude,
     longitude
-  }: UploadSignatureDto): Promise<Uint8Array<ArrayBufferLike>> {
+  }: {
+    idOrden: number
+    latitude: number
+    longitude: number
+  }): Promise<Uint8Array<ArrayBufferLike>> {
     const [result] = await this.sqlService.query(
       `EXEC dbo.sp_jasper_domiciliacionBBVA @idOrden = ${idOrden}`
     )
@@ -432,10 +449,11 @@ export class DirectDebitsService {
     return pdfBuffer
   }
 
-  async signDirectDebitDoc(idOrden: number) {
+  async signDirectDebitDoc(idOrden: number, idSolicitudDom: number) {
     await this.getDirectDebitByIdOrden(idOrden)
 
     await this.sqlService.query(this.signDirectDebit, { idOrden })
+    await this.updateStep(5, idSolicitudDom)
 
     return { message: 'Documento firmado' }
     // TODO: subir a edicom

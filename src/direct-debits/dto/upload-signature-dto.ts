@@ -7,6 +7,11 @@ export class UploadSignatureDto {
   @Type(() => Number)
   idOrden: number
 
+  @IsInt()
+  @Min(1)
+  @Type(() => Number)
+  idSolicitudDom: number
+
   @IsNumber()
   @Type(() => Number)
   latitude: number
