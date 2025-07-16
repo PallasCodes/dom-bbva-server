@@ -25,6 +25,7 @@ export class WebsocketGateway {
   }
 
   emitToClient(socketId: string, event: string, payload: any) {
+    console.log('🚀 ~ WebsocketGateway ~ emitToClient ~ socketId:', socketId)
     this.server.to(socketId).emit(event, payload)
   }
 }
