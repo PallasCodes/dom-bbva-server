@@ -43,13 +43,6 @@ export class SaveDirectDebitDto {
   @IsIn(['M', 'F'], { message: 'Sexo debe ser M o F' })
   sexo: string
 
-  @IsString()
-  @Length(18, 18)
-  @Matches(/^012[0-9]{15}$/, {
-    message: 'CLABE inválida: debe empezar con 012 y tener 18 dígitos'
-  })
-  clabe: string
-
   @Type(() => Number)
   @IsInt()
   idSolicitudDomiciliacion: number

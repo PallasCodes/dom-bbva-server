@@ -29,7 +29,7 @@ import { SaveDirectDebitDto } from './dto/save-direct-debit.dto'
 import { TokuWebhookRequestDto } from './dto/toku-webhook-request.dto'
 import { UploadSignatureDto } from './dto/upload-signature-dto'
 import { ValidateClabeDto } from './dto/validate-clabe.dto'
-import { encrypt } from 'src/utils/crypto.util'
+import { encrypt } from '../utils/crypto.util'
 
 @Injectable()
 export class DirectDebitsService {
@@ -44,6 +44,7 @@ export class DirectDebitsService {
   private readonly createValidationTry: string
   private readonly getNumTokuValidationTries: string
   private readonly signDirectDebit: string
+  private readonly saveClabe: string
   private readonly saveSeal: string
 
   private readonly digitalSignature = 4202
@@ -114,6 +115,10 @@ export class DirectDebitsService {
 
     this.saveSeal = fs.readFileSync(
       path.join(__dirname, 'queries', 'save-seal.sql'),
+      'utf8'
+    )
+    this.saveClabe = fs.readFileSync(
+      path.join(__dirname, 'queries', 'save-info-domiciliacion-clabe.sql'),
       'utf8'
     )
 
@@ -292,6 +297,10 @@ export class DirectDebitsService {
     this.logger.log(
       `Toku event: ${dto.bank_account_verification.id_bank_account_verification}`
     )
+
+    if (eventPayload.valid) {
+      this.sqlService.query(this.saveClabe, { idOrden: verificacionToku.idOrden })
+    }
 
     this.websocketService.emitToClient(
       verificacionToku.idSocketIo,
