@@ -13,8 +13,7 @@ SET
     apellidoPaterno = @apellidoPaterno,
     apellidoMaterno = @apellidoMaterno,
     rfc = @rfc,
-    curp = @curp,
-    sexo = @sexo
+    curp = @curp
 WHERE
     idSolicitudDomiciliacion = @idSolicitudDomiciliacion END ELSE BEGIN
     -- Si no existe: inserta
@@ -26,7 +25,6 @@ INSERT INTO
         apellidoMaterno,
         rfc,
         curp,
-        sexo,
         idSolicitudDomiciliacion
     )
 VALUES (
@@ -36,6 +34,5 @@ VALUES (
         @apellidoMaterno,
         @rfc,
         @curp,
-        @sexo,
         @idSolicitudDomiciliacion
     ) END

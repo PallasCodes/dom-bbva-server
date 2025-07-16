@@ -10,16 +10,16 @@ POST http://localhost:3000/api/direct-debits/toku-webhook
 Content-Type: application/json
 
 {
-    "id": "wheve_blMb52rKsi7RZoSq8WKZCQcPf7Ufsu61",
+    "id": "wheve_vzD-Ozd23YQJ-D3GA7ehZRHjnsgM6p45",
     "event_type": "bank_account_verification.result",
     "bank_account_verification": {
-        "id_bank_account_verification": "bav_pFKs_gQ-WDmy6IISPd9-vrHamuXxxaAq",
+        "id_bank_account_verification": "bav_1zIk9Tg0Mkb9o6WgN3Hv6N-ViM5LZC0j",
         "status": "DONE",
         "validation": "SUCCESS",
         "reason": null,
         "voucher_url": {
-            "pdf": "https://api-storage.trytoku.com/v1/streaming/x01Vxp2DktEuJLnC-5dMv_JVgrsSfRQTI9E6onClgcDupR4OHAV3OhqDWSHsdExTAXEaMqqj-gIvh1cXUERhbQ-k6iaCGV5yNy0KH4gMB_4SsDShK51gBakKGW0Hl36UGEnVfj7TcKr7VEB8IWfRafDg37xC4T7llYwsI6eOzVfTM9D7PziekanWZZqznscVv9bJIeF5I5MpWoEF7sGPhNOn6_riq7vCoYAJ31rooKxCJnt2AHFBPSbu_RC6RAiFE-QZx9kk9H9kXkHhuLDaIogwDl3F8rZZWPJYTMCu5Yf4SWz8fffkbEBFg2i3GsWYTmJfLzSXPHDpWA6AW3MLSHPc6oq0lA0x3cAbbqb0GgRLfF3W8r0M5cVpS1VJeSc3GhRNBL7JJwEsVz8Jct3ovuDQY63zzvrWMMtwRTJ799rBI4o6qslDM3d-06AYqBb6L5agTa4yfpu96hfC4KdxUlc-0IpOWCvcsi6uM0Y1UVIHxsLa-BWVltDSAVcR3FQXlUUe-29eYhevr3v_W5O5nGN7oY8oR8KuzrPVLide7XpdA76qTIGRXrFDsu6xLliuoa2NpzWAAzPR3Ch-TVB-bfKAifCFuQGFCPUFLwYhdJ4QpFh7Im0WRL7joFJFIW4AZAJvPDaNeHGMnU1SDgStf5zv3KdXpf_17lV85Sy2bvhLRHfuBjrreOtFurST3Bt_0rjsQ_Iv_2QQ2fnR",
-            "xml": "https://api-storage.trytoku.com/v1/streaming/bKVCejpMXSyXgkCjgWbirQ5SG6QjhUMgu2T94BVFlCnUZYSTtW8J92Pn9pHlwznQ71pUVKx8TI0LtXeE_rN4j_19qhsWqmLbYSH1-Ky3NVsrdmWbtsZraz_LnvDByv5W18H3TgiRMeL-qoQfH-qC88_ge5uapmQ7NeyVWLTeX99vPCk9o9sZap4E9oQaT3OOCR3oa3utIPGMoa27_rsC9Ysw-gqAIJLGxQkWuDbfEUwKkKvA_KNNKHn5xKbmc3_9hmwGsDJJjqzelSYOmz4TfZ3v7cqILrRQGVrxtj8mUIhijHytRTF8Gj6KaKezxoaE6Y-Hf5lKcM3ZvrncHP7OYxGWDFNSbooUs4ku7opoZxEcmH2fEuRP9XYoxkCPpdkqR_nuaFKyAjhNSlTreLFiMK1Kt7aMgq0TzvlEjrx-8n1YqVVULQN53yOnplPXoqTrlRAhENXOC300GuyRkoEvL_IcgwONicMcqRyFSVIfWm_gQnXAEso4K2qC6428TiMInPwPycDXUU6s_ddvxQUnwZuMkuU5xdbLQ5mCC2jcH3__X09Ai2SVkF4gIYA1qbANOg2KfBjjfuQfYZnoAFhmS9Caexx7W6WzLYfh8G90qmWWw6RW6HsUL8koVT4ms_n6TQcwbplw8Vy7OqfX2qC7vP8EBGVpZA58eyc39KjzcFVgYHyPDj3F8HKxt1wc5uFUM7dUCoqZGYZDIqvQ"
+            "pdf": "https://api-storage.trytoku.com/v1/streaming/bzueWfaH8GFw-D4pOSgCUhSLVAP5McW4sKZlFLAx5Xq_aFT-UzJz4CSJhZoPAKgCdkbAdOD335mpXxxr3JoYox7YK70ECmtaCjDj5FORJzP-rA1_XNKOhMyrvpXlosMVccCem4fKrDcHPiPhh-yz4Gc99F1wGpHTSOtgUDRG24M1zLOO3EjgbqQQjLQVPmVz5cB86IqhDER75aIp6_Ph40ltwBSyc4S39dfu3fqd7u8d2RDwEcsWY_JPS3gWaHZdkCrAwgwZHW0wYxgkdocIIec4tLFTyqwNuj_w7pHXhoqsZxVG5q2xdQpyX_SROKGaifoShUskKKYCkECkjjpaAU_JQg0CYeX1Oex89f84PzzpLI6D7rlDzd8dyDTel-2FpIWq_JB6nNTVtBlJeyxXqsbduLRd5_1dmwFNqQl7mhyxeNIQlZVvDxcbVUj6f9wJP7K3Injt2LGJWQQtjIULWfdECrTyxLY73t7Q2TVrc2fwUInYv7ik6W32O8qgsWlj1UNFD2Cj5iSWVm65i4KSW0STgat8Ac91wQW83IKxgTAjfhfeFdYAxNtzYdcGwo_Djc2IUol_LfLV9dVXTI3gcdGU-P4lHW84sGbnwMA9TemPC4KyatwkQstdA24fn5SWHgWYTmoCVdnu9S00g5fuA6kNymGbwvWr0tgybV382CuG7RcCrUXy5ODvnTOXLpvbWw4k956JTqVOIDob",
+            "xml": "https://api-storage.trytoku.com/v1/streaming/v6lPKFhlZuWRrxG8zAKsU90-Zma1zW_au7y6ImFCj4t9CwxM8nIQKt1lhapQhH1LSVrVx6893eUFQXybq0IOUQOuBxRgvjjm-5H_Lqtp5_eaYElvpjFgACDmHPrgFrAhvcJK5chaHYO6QBG54XjQzHg62CxFSkx-IrzQ8Ehyo5_zpttmAvIDjFFS800R4Xt5pu7Sk9jIi7wi6RP-Tm4t0TnyufWBBoUjBcad3DX0eUjQslhXH1pXjOXDNAKNUz3pq67Q36kRFttGSqbGMZWQP44mVVhXnIC6tDMAo8OaUWzh84XDPCu1ab2bChHmzZ9Ccg0RwkEB8jCc4H_MpCcGONGRmiH6typvw27c72DVD6w60e5G3YFwQ0cexQfRBFXFCxnhFPD8wjNhF_Q77A8429roMntvmZnpWRhvey0UgWtVCJiCHbRVHrxpPBvy7nQ1oif2CvLpfHehv-9D6PJAzPTvfTVZZLKpg8GTnsAo4p8JKUTNxZ8-rikpINQhwBX-XKs-uKWzF7LNAUN6pSwT4C8J4fujZAiE1MTVG2x-XnQKuTac6qWeGqdxYHol2XNXWYM-_ILBNCQJcOxvoSH3vs3_laDRchu2_mpvc4UWNmtf-0gmqQOalEKm4wRQK_kVfyAr0XBTdsox-c049fiIG-uhtEiukViMYzd6F9evb6vqow43DxUknjbq6Ly5UOxvU8Qes4LuTmhcZiaG"
         },
         "account_number": "012840015093214334",
         "customer_identifier": "TOMB971024UW4",
@@ -29,13 +29,13 @@ Content-Type: application/json
             "receiver_institution": "BBVA BANCOMER",
             "receiver_name": "BERNARDO TORRES MEDINA",
             "receiver_account_type": "40",
-            "operation_date": "2025-07-15",
-            "operation_time": "10:51:25",
+            "operation_date": "2025-07-16",
+            "operation_time": "17:11:56",
             "spei_id": "40012",
-            "signature": "XJEg4dyt9a2+Pxh0MqJFXn6wnR20Z4aFjwTnoFoNp1Ul7WLNIw5j3gBChw19BBCYywDKf5xERGlZgFMoghA3PUp9wKW2UUyw0eMrFxEeX67ck1MgyFMzHLOSyTKfYjrnJVnygtS7z8JEFfjwuU6I9uF4SBxevXQ03TELq3mml5tLclSz2y2vydZv+zdnPcgyNs/KlpZ7f0rvskHWAoYXTo1MqYyU5lVDhJacdZI1Mt56J6BtQW4HDSBJyCP0bSiLO4I1OcL2HZs92YXs9lsZ5Ri1bUMeLZrfabQ1rAnMbwLj5+M/qWJIZVmsHry2VdshMkhQ7sKlNROnabkPK6m1vw==",
+            "signature": "M7/MqSk8nexEB9oQQKZz1c/iFlC6Fexpnp+MqVddD4U0V/7/mzjxvRNQUma6fC06S8Plr45gLsNrEyQvPtUNw+1RZ0TD2aYJZVeFlNI6+WpW9qTH3g59xl8szuIm60/55teWx89AgBgpbAesIcabGgTtxQe/9j5dKvW6MFaTWIEXBfLaJVdpNStMbdut8xgZbxKwOkATQ5UHCWZdtnzryUpdlrqf+oh866RgZDCq2kt3ymMjE2WYx0c2zZjLb05PUB/kDLeBvqFGFDpx5v0w0V9ya+t1v1RGPTXGinbQ2V4P28k675xQ+yLpGFSiXqBgRE8/7S1nrojuhdKgYr+x1Q==",
             "certificate_number": "00001000000511796968",
-            "cda_chain": "||01|15072025|15072025|105125|40012|STP|TRYTOKU S DE RL DE CV|40|646180328500700002|TRY220304U60|BBVA BANCOMER|BERNARDO TORRES MEDINA|40|012840015093214334|TOMB971024UW4|Validation transfer|000000000000000.00|000000000000000.01|NA|NA|0|0|NA|0|000000000000000.00|00001000000511796968||XJEg4dyt9a2+Pxh0MqJFXn6wnR20Z4aFjwTnoFoNp1Ul7WLNIw5j3gBChw19BBCYywDKf5xERGlZgFMoghA3PUp9wKW2UUyw0eMrFxEeX67ck1MgyFMzHLOSyTKfYjrnJVnygtS7z8JEFfjwuU6I9uF4SBxevXQ03TELq3mml5tLclSz2y2vydZv+zdnPcgyNs/KlpZ7f0rvskHWAoYXTo1MqYyU5lVDhJacdZI1Mt56J6BtQW4HDSBJyCP0bSiLO4I1OcL2HZs92YXs9lsZ5Ri1bUMeLZrfabQ1rAnMbwLj5+M/qWJIZVmsHry2VdshMkhQ7sKlNROnabkPK6m1vw==",
-            "tracking_id": "2025071590646VCC1651182YOBHG"
+            "cda_chain": "||01|16072025|16072025|171156|40012|STP|TRYTOKU S DE RL DE CV|40|646180328500700002|TRY220304U60|BBVA BANCOMER|BERNARDO TORRES MEDINA|40|012840015093214334|TOMB971024UW4|Validation transfer|000000000000000.00|000000000000000.01|NA|NA|0|0|NA|0|000000000000000.00|00001000000511796968||M7/MqSk8nexEB9oQQKZz1c/iFlC6Fexpnp+MqVddD4U0V/7/mzjxvRNQUma6fC06S8Plr45gLsNrEyQvPtUNw+1RZ0TD2aYJZVeFlNI6+WpW9qTH3g59xl8szuIm60/55teWx89AgBgpbAesIcabGgTtxQe/9j5dKvW6MFaTWIEXBfLaJVdpNStMbdut8xgZbxKwOkATQ5UHCWZdtnzryUpdlrqf+oh866RgZDCq2kt3ymMjE2WYx0c2zZjLb05PUB/kDLeBvqFGFDpx5v0w0V9ya+t1v1RGPTXGinbQ2V4P28k675xQ+yLpGFSiXqBgRE8/7S1nrojuhdKgYr+x1Q==",
+            "tracking_id": "2025071690646VCC2311478RHGXB"
         }
     }
 }
@@ -53,7 +53,6 @@ Content-Type: application/json
   "idNacionalidad": 1,
   "idEstadoCivil": 2,
   "dependientes": 0,
-  "sexo": "M",
   "clabe": "012345678901234567",
   "urlFirma": "https://tuservidor.com/firmas/bertorres.png",
   "idSolicitudDomiciliacion": 123

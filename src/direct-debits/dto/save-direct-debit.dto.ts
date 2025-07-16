@@ -38,11 +38,6 @@ export class SaveDirectDebitDto {
   })
   curp: string
 
-  @IsString()
-  @Length(1, 1)
-  @IsIn(['M', 'F'], { message: 'Sexo debe ser M o F' })
-  sexo: string
-
   @Type(() => Number)
   @IsInt()
   idSolicitudDomiciliacion: number

@@ -15,16 +15,7 @@ const gatewayConfig =
       }
     : {}
 
-@WebSocketGateway({
-  cors: {
-    origin: process.env.WS_CORS,
-    methods: ['GET', 'POST'],
-    credentials: true
-  },
-  transports: ['websocket'],
-  namespace: '/dom-bbva',
-  path: '/dom-bbva/socket.io'
-})
+@WebSocketGateway()
 export class WebsocketGateway {
   @WebSocketServer()
   server: Server
