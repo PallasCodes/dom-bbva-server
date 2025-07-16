@@ -299,7 +299,10 @@ export class DirectDebitsService {
     )
 
     if (eventPayload.valid) {
-      this.sqlService.query(this.saveClabe, { idOrden: verificacionToku.idOrden })
+      this.sqlService.query(this.saveClabe, {
+        idOrden: verificacionToku.idOrden,
+        clabe: verificacionToku.clabeIntroducida
+      })
     }
 
     this.websocketService.emitToClient(
