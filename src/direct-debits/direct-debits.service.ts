@@ -289,6 +289,10 @@ export class DirectDebitsService {
           : 'La CLABE no coincide con tu RFC'
     }
 
+    this.logger.log(
+      `Toku event: ${dto.bank_account_verification.id_bank_account_verification}`
+    )
+
     this.websocketService.emitToClient(
       verificacionToku.idSocketIo,
       'clabe_verification_result',
