@@ -46,6 +46,7 @@ export class DirectDebitsService {
   private readonly signDirectDebit: string
   private readonly saveClabe: string
   private readonly saveSeal: string
+  private readonly updatePublicUrlDom: string
 
   private readonly digitalSignature = 4202
   private readonly directDebit: number
@@ -119,6 +120,11 @@ export class DirectDebitsService {
     )
     this.saveClabe = fs.readFileSync(
       path.join(__dirname, 'queries', 'save-info-domiciliacion-clabe.sql'),
+      'utf8'
+    )
+
+    this.updatePublicUrlDom = fs.readFileSync(
+      path.join(__dirname, 'queries', 'update-public-url-dom.sql'),
       'utf8'
     )
 
@@ -369,8 +375,7 @@ export class DirectDebitsService {
     { idOrden, latitude, longitude, idSolicitudDom }: UploadSignatureDto
   ) {
     const codeName = `${idOrden}.${this.digitalSignature}`
-    const extension = path.extname(file.originalname)
-    const fileName = `${codeName}.${new Date().getTime()}${extension}`
+    const fileName = `${codeName}.${new Date().getTime()}.png`
     const key = `${new Date().getFullYear()}/${idOrden}/${fileName}`
     const params = {
       Bucket: this.bucket,
@@ -502,6 +507,13 @@ export class DirectDebitsService {
       }
 
       const pdfUrl = await this.uploadFileToS3(params)
+
+      await this.sqlService.query(this.updatePublicUrlDom, {
+        idDocumento: this.directDebit,
+        idOrden,
+        publicUrl: pdfUrl,
+        s3Key: key
+      })
 
       return { message: 'Documento firmado', pdfUrl }
     } catch (err) {

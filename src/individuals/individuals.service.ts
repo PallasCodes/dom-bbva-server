@@ -52,7 +52,6 @@ export class IndividualsService {
       'utf8'
     )
   }
-  // TODO: update publicUrl de doc domiciliacion despues de firmar
 
   async validateIndividual(dto: ValidateCodeDto) {
     const validData = await this.sqlService.query(this.validateCut, dto)

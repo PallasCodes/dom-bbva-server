@@ -18,6 +18,3 @@ export interface VerificacionToku {
   idSocketIo: string
   idOrden?: string
 }
-
-// TODO: modificar el query del jasper para jalar la info bancaria de tabla dbo.infoDomiciliacion
-// TODO: checar por qué no se llama la api de guardar info cliente
