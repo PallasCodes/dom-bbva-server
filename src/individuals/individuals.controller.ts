@@ -26,4 +26,9 @@ export class IndividualsController {
   getLoanInfo(@Param('folioOrden') folioOrden: string) {
     return this.individualsService.getLoanInfo(folioOrden)
   }
+
+  @Post('send-sms/:folioOrden')
+  sendDirectDebitSms(@Param('folioOrden') folioOrden: string) {
+    return this.individualsService.sendSms(folioOrden)
+  }
 }

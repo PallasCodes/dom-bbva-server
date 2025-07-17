@@ -5,6 +5,7 @@ import {
   forwardRef,
   Inject,
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
   UnauthorizedException
 } from '@nestjs/common'
@@ -21,8 +22,10 @@ export class IndividualsService {
   private readonly getBankInfo: string
   private readonly getLoanInfoQuery: string
   private readonly getSolDomByFolio: string
+  private readonly getContactInfoByFolio: string
 
   private readonly directDebit: number
+  private readonly bitlyToken: string
 
   constructor(
     private configService: ConfigService,
@@ -31,6 +34,8 @@ export class IndividualsService {
     private readonly directDebitsService: DirectDebitsService
   ) {
     this.directDebit = this.configService.get<string>('ENV') === 'dev' ? 4239 : 4251
+    this.bitlyToken = this.configService.get<string>('BITLY_TOKEN') as string
+
     this.validateCut = fs.readFileSync(
       path.join(__dirname, 'queries', 'validate-cut.sql'),
       'utf8'
@@ -51,6 +56,69 @@ export class IndividualsService {
       path.join(__dirname, 'queries', 'get-sol-dom-by-folio.sql'),
       'utf8'
     )
+    this.getContactInfoByFolio = fs.readFileSync(
+      path.join(__dirname, 'queries', 'get-contact-info-by-folio.sql'),
+      'utf8'
+    )
+  }
+
+  async minifyUrl(url: string): Promise<string> {
+    try {
+      const response = await fetch('https://api-ssl.bitly.com/v4/shorten', {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${this.bitlyToken}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ long_url: url })
+      })
+
+      if (!response.ok) {
+        throw new Error('Error al acortar la URL')
+      }
+
+      const data = await response.json()
+      return data.link
+    } catch (err) {
+      throw err
+    }
+  }
+
+  async sendSms(folioOrden: string) {
+    try {
+      const [contactInfo] = await this.sqlService.query(this.getContactInfoByFolio, {
+        idTipo: 1302,
+        folioOrden
+      })
+
+      const url = await this.minifyUrl(
+        `https://dom-bbva.netlify.app/?folio=${folioOrden}`
+      )
+      const payload = {
+        cellphone: contactInfo.contacto,
+        msg: `Cambia tu cuenta CLABE para automatizar la domiciliación de tu crédito Intermercado ${url}`
+      }
+
+      // TODO: insert or update dbo.solicitudDomiciliacion
+
+      await this.sqlService.query('EXEC gbplus.dbo.fn_Sms @celphone, @msg', payload)
+
+      return {
+        mensaje: {
+          error: false,
+          mensaje: 'SMS enviado correctamente',
+          mostrar: 'TOAST'
+        }
+      }
+    } catch (err) {
+      throw new InternalServerErrorException({
+        mensaje: {
+          error: true,
+          mensaje: 'Ocurrió un error al enviar el SMS. Vuelve a intentarlo',
+          mostrar: 'DIALOG'
+        }
+      })
+    }
   }
 
   async validateIndividual(dto: ValidateCodeDto) {
