@@ -399,6 +399,20 @@ export class DirectDebitsService {
         longitude: +longitude
       })
 
+      const codeNameDom = `${idOrden}.${this.directDebit}`
+      const fileNameDom = `${codeNameDom}.${new Date().getTime()}.pdf`
+      const keyDom = `${new Date().getFullYear()}/${idOrden}/${fileNameDom}`
+
+      const queryParamsDom = {
+        idOrden,
+        publicUrl: pdfUrl,
+        idDocumento: this.directDebit,
+        nombreArchivo: fileNameDom,
+        tamanoArchivo: 0,
+        s3Key: keyDom
+      }
+      await this.sqlService.query(this.createDocumentoOrden, queryParamsDom)
+
       await this.updateStep(4, +idSolicitudDom)
 
       return { message: 'Firma digital guardada correctamente', pdfUrl }
