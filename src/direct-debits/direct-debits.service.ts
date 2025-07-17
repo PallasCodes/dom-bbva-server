@@ -427,6 +427,7 @@ export class DirectDebitsService {
 
     const selloClear = `idOrden=${idOrden}|geoLatitud=${latitude}|geoLongitud=${longitude}`
     result.encryptedSeal = encrypt(selloClear)
+    result.showTimeStamp = false
 
     await this.sqlService.query(this.saveSeal, {
       idOrden,
@@ -434,28 +435,64 @@ export class DirectDebitsService {
       sello: result.encryptedSeal
     })
 
-    const html = directDebitTemplate(result)
-    const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox'] })
-    const page = await browser.newPage()
-    await page.setContent(html, { waitUntil: 'networkidle0' })
+    return this.generateDebitDocument(result)
+  }
 
-    const pdfBuffer = await page.pdf({
-      format: 'letter',
-      printBackground: true,
-      margin: { top: '0in', right: '0in', bottom: '0in', left: '0in' }
-    })
+  private async generateDebitDocument(result: any) {
+    try {
+      const html = directDebitTemplate(result)
+      const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox'] })
+      const page = await browser.newPage()
+      await page.setContent(html, { waitUntil: 'networkidle0' })
 
-    await browser.close()
-    return pdfBuffer
+      const pdfBuffer = await page.pdf({
+        format: 'letter',
+        printBackground: true,
+        margin: { top: '0in', right: '0in', bottom: '0in', left: '0in' }
+      })
+
+      await browser.close()
+      return pdfBuffer
+    } catch (err) {
+      throw err
+    }
   }
 
   async signDirectDebitDoc(idOrden: number, idSolicitudDom: number) {
-    await this.getDirectDebitByIdOrden(idOrden)
+    try {
+      await this.getDirectDebitByIdOrden(idOrden)
 
-    await this.sqlService.query(this.signDirectDebit, { idOrden })
-    await this.updateStep(5, idSolicitudDom)
+      await this.sqlService.query(this.signDirectDebit, { idOrden })
+      await this.updateStep(5, idSolicitudDom)
 
-    return { message: 'Documento firmado' }
+      const [result] = await this.sqlService.query(
+        `EXEC dbo.sp_jasper_domiciliacionBBVA @idOrden = ${idOrden}`
+      )
+
+      if (!result) {
+        throw new NotFoundException('No se encontró la información de tu credito')
+      }
+      result.showTimeStamp = true
+      const pdfBuffer = await this.generateDebitDocument(result)
+
+      const codeName = `${idOrden}.${this.directDebit}`
+      const fileName = `${codeName}.${new Date().getTime()}.pdf`
+      const key = `${new Date().getFullYear()}/${idOrden}/${fileName}`
+
+      const params: PutObjectCommandInput = {
+        Bucket: this.bucket,
+        Key: key,
+        Body: pdfBuffer,
+        ContentType: 'application/pdf',
+        ACL: ObjectCannedACL.public_read
+      }
+
+      const pdfUrl = await this.uploadFileToS3(params)
+
+      return { message: 'Documento firmado', pdfUrl }
+    } catch (err) {
+      throw new InternalServerErrorException('Ocurrió un error al firmar el documento')
+    }
     // TODO: subir a edicom
   }
 }

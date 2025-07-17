@@ -121,10 +121,10 @@ export const directDebitTemplate = (payload: any): string => {
         <p style="top: 425px; left: 622px;">${payload.tokentelefono10}</p>
 
         <p style="top: 640px; left: 444px; font-size: 8px; font-weight: 500;">
-          Firmado electrónicamente por ${payload.deudor} el día ${timeStamp}
+          Firmado electrónicamente por ${payload.deudor} ${payload.showTimeStamp ? `el día ${timeStamp}` : ''}
         </p>
         <p style="top: 1015px; left: 444px; font-size: 8px; font-weight: 500;">
-          Firmado electrónicamente por ${payload.deudor} el día ${timeStamp}
+          Firmado electrónicamente por ${payload.deudor} ${payload.showTimeStamp ? `el día ${timeStamp}` : ''}
         </p>
 
         <div style="top: 944px; left: 480px; width: 140px; position: absolute;">
