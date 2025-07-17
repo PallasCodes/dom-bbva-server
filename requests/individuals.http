@@ -13,3 +13,6 @@ GET http://localhost:3000/api/individuals/CDI721953VDW
 
 ###
 GET http://localhost:3000/api/individuals/bank/CDI721953VDW
+
+### 
+POST http://localhost:3000/api/individuals/send-sms/CDI700046VDW

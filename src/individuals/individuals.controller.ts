@@ -27,8 +27,18 @@ export class IndividualsController {
     return this.individualsService.getLoanInfo(folioOrden)
   }
 
-  @Post('send-sms/:folioOrden')
-  sendDirectDebitSms(@Param('folioOrden') folioOrden: string) {
-    return this.individualsService.sendSms(folioOrden)
+  @Post('send-sms')
+  async sendDirectDebitSms(@Body('folios') folios: string[]) {
+    const promises = folios.map(this.individualsService.sendSms)
+
+    await Promise.allSettled(promises)
+
+    return {
+      mensaje: {
+        error: false,
+        mensaje: 'SMS enviado correctamente',
+        mostrar: 'TOAST'
+      }
+    }
   }
 }

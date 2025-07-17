@@ -6,6 +6,7 @@ import {
   Inject,
   Injectable,
   InternalServerErrorException,
+  Logger,
   NotFoundException,
   UnauthorizedException
 } from '@nestjs/common'
@@ -26,6 +27,7 @@ export class IndividualsService {
 
   private readonly directDebit: number
   private readonly bitlyToken: string
+  private readonly logger = new Logger()
 
   constructor(
     private configService: ConfigService,
@@ -80,6 +82,7 @@ export class IndividualsService {
       const data = await response.json()
       return data.link
     } catch (err) {
+      this.logger.error(err)
       throw err
     }
   }
@@ -101,7 +104,7 @@ export class IndividualsService {
 
       // TODO: insert or update dbo.solicitudDomiciliacion
 
-      await this.sqlService.query('EXEC gbplus.dbo.fn_Sms @celphone, @msg', payload)
+      await this.sqlService.query('EXEC gbplus.dbo.fn_Sms @cellphone, @msg', payload)
 
       return {
         mensaje: {
@@ -111,6 +114,7 @@ export class IndividualsService {
         }
       }
     } catch (err) {
+      this.logger.error(err)
       throw new InternalServerErrorException({
         mensaje: {
           error: true,
