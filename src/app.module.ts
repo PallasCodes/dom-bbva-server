@@ -4,6 +4,7 @@ import databaseConfig from './config/database.config'
 import { DirectDebitsModule } from './direct-debits/direct-debits.module'
 import { IndividualsModule } from './individuals/individuals.module'
 import { WebsocketModule } from './websocket/websocket.module'
+import { EdicomModule } from './edicom/edicom.module';
 
 @Module({
   imports: [
@@ -13,7 +14,8 @@ import { WebsocketModule } from './websocket/websocket.module'
       load: [databaseConfig]
     }),
     DirectDebitsModule,
-    WebsocketModule
+    WebsocketModule,
+    EdicomModule
   ]
 })
 export class AppModule {}

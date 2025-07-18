@@ -30,6 +30,7 @@ import { TokuWebhookRequestDto } from './dto/toku-webhook-request.dto'
 import { UploadSignatureDto } from './dto/upload-signature-dto'
 import { ValidateClabeDto } from './dto/validate-clabe.dto'
 import { encrypt } from '../utils/crypto.util'
+import { EdicomService } from 'src/edicom/edicom.service'
 
 @Injectable()
 export class DirectDebitsService {
@@ -58,7 +59,8 @@ export class DirectDebitsService {
   constructor(
     private configService: ConfigService,
     private readonly sqlService: SqlService,
-    private readonly websocketService: WebsocketService
+    private readonly websocketService: WebsocketService,
+    private readonly edicomService: EdicomService
   ) {
     this.directDebit = this.configService.get<string>('ENV') === 'dev' ? 4239 : 4251
 
@@ -515,7 +517,19 @@ export class DirectDebitsService {
         s3Key: key
       })
 
-      return { message: 'Documento firmado', pdfUrl }
+      const bufferFile = Buffer.from(pdfBuffer)
+
+      const uuid = await this.edicomService.uploadFile({
+        idOrden,
+        file: bufferFile,
+        documentName: idOrden.toString(),
+        documentTitle: `${idOrden}-domiciliacion.pdf`,
+        tags: idOrden.toString()
+      })
+
+      // TODO: insertar en tabla edicom nueva
+
+      return { message: 'Documento firmado', pdfUrl, uuid }
     } catch (err) {
       throw new InternalServerErrorException('Ocurrió un error al firmar el documento')
     }
