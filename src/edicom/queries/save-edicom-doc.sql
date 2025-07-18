@@ -2,7 +2,6 @@ INSERT INTO
     dbo.documentoEdicomDom (
         idOrden,
         UUID,
-        tiempoCreacion,
         tags,
         documentTitle,
         documentName,
@@ -11,7 +10,6 @@ INSERT INTO
 VALUES (
         @idOrden,
         @uuid,
-        @tiempoCreacion,
         @tags,
         @documentTitle,
         @documentName,
