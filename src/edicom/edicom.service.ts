@@ -80,7 +80,6 @@ export class EdicomService {
 
       return uuid
     } catch (err) {
-      console.log({ err })
       this.logger.error(err)
       throw new InternalServerErrorException(
         'Ocurrió un error al subir el archivo a Edicom'
