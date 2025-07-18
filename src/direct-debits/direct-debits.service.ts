@@ -519,20 +519,29 @@ export class DirectDebitsService {
 
       const bufferFile = Buffer.from(pdfBuffer)
 
-      const uuid = await this.edicomService.uploadFile({
+      const uploadEdicomDocPayload = {
         idOrden,
         file: bufferFile,
         documentName: idOrden.toString(),
         documentTitle: `${idOrden}-domiciliacion.pdf`,
         tags: idOrden.toString()
-      })
+      }
 
-      // TODO: insertar en tabla edicom nueva
+      const UUID = await this.edicomService.uploadFile(uploadEdicomDocPayload)
 
-      return { message: 'Documento firmado', pdfUrl, uuid }
+      const saveEdicomDocPayload = {
+        idOrden: uploadEdicomDocPayload.idOrden,
+        documentName: uploadEdicomDocPayload.documentName,
+        documentTitle: uploadEdicomDocPayload.documentTitle,
+        folder: uploadEdicomDocPayload.idOrden.toString(),
+        tags: uploadEdicomDocPayload.idOrden.toString(),
+        UUID
+      }
+      await this.edicomService.saveEdicomDoc(saveEdicomDocPayload)
+
+      return { message: 'Documento firmado', pdfUrl }
     } catch (err) {
       throw new InternalServerErrorException('Ocurrió un error al firmar el documento')
     }
-    // TODO: subir a edicom
   }
 }

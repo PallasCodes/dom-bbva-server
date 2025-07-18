@@ -1,8 +1,9 @@
+import * as fs from 'fs'
+import * as path from 'path'
+
 import { HttpService } from '@nestjs/axios'
 import {
   BadRequestException,
-  HttpException,
-  HttpStatus,
   Injectable,
   InternalServerErrorException,
   Logger
@@ -12,6 +13,8 @@ import * as FormData from 'form-data'
 import * as mime from 'mime-types'
 import { firstValueFrom } from 'rxjs'
 
+import { SqlService } from 'src/database/sql.service'
+import { DocumentoEdicomDom } from 'src/types/documento-edicom-dom.interface'
 import { DocumentoEdicom } from '../types/documento-edicom.interface'
 
 @Injectable()
@@ -28,9 +31,12 @@ export class EdicomService {
   private readonly grantType: string
   private readonly baseUrlRest: string
 
+  private readonly saveEdicomDocDom: string
+
   constructor(
     private readonly httpService: HttpService,
-    private readonly configService: ConfigService
+    private readonly configService: ConfigService,
+    private readonly sqlService: SqlService
   ) {
     this.urlAuth = this.configService.get<string>('EDICOM_AUTH_URL') as string
     this.clientId = this.configService.get<string>('EDICOM_CLIENT_ID') as string
@@ -38,6 +44,11 @@ export class EdicomService {
     this.password = this.configService.get<string>('EDICOM_PASSWORD') as string
     this.grantType = this.configService.get<string>('EDICOM_GRANT_TYPE') as string
     this.baseUrlRest = this.configService.get<string>('EDICOM_REST_URL') as string
+
+    this.saveEdicomDocDom = fs.readFileSync(
+      path.join(__dirname, 'queries', 'save-edicom-doc.sql'),
+      'utf8'
+    )
   }
 
   async uploadFile({
@@ -52,7 +63,7 @@ export class EdicomService {
     tags: string
     documentName: string
     documentTitle: string
-  }) {
+  }): Promise<string> {
     try {
       const dirName = idOrden.toString()
 
@@ -66,9 +77,8 @@ export class EdicomService {
       }
 
       const uuid = await this.uploadDocument(accesstoken, dirName, file, doc)
-      doc.uuid = uuid
 
-      return doc
+      return uuid
     } catch (err) {
       console.log({ err })
       this.logger.error(err)
@@ -163,5 +173,9 @@ export class EdicomService {
       this.logger.error('Error al subir documento:', error.message)
       throw error
     }
+  }
+
+  async saveEdicomDoc(params: DocumentoEdicomDom): Promise<void> {
+    await this.sqlService.query(this.saveEdicomDocDom, params)
   }
 }

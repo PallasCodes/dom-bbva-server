@@ -9,10 +9,7 @@ import { DirectDebitsModule } from '../direct-debits/direct-debits.module'
 @Module({
   controllers: [IndividualsController],
   providers: [IndividualsService, SqlService],
-  imports: [
-    WebsocketModule,
-    forwardRef(() => DirectDebitsModule) // 👈 importante
-  ],
+  imports: [WebsocketModule, forwardRef(() => DirectDebitsModule)],
   exports: [IndividualsService]
 })
 export class IndividualsModule {}

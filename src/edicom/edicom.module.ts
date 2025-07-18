@@ -1,13 +1,12 @@
-import { Module } from '@nestjs/common'
 import { HttpModule } from '@nestjs/axios'
+import { Module } from '@nestjs/common'
 
+import { SqlService } from '../database/sql.service'
 import { EdicomService } from './edicom.service'
-import { EdicomController } from './edicom.controller'
 
 @Module({
   imports: [HttpModule],
-  providers: [EdicomService],
-  controllers: [EdicomController],
+  providers: [EdicomService, SqlService],
   exports: [EdicomService]
 })
 export class EdicomModule {}
