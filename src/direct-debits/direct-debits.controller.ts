@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Get,
@@ -18,11 +19,6 @@ import { ValidateClabeDto } from './dto/validate-clabe.dto'
 @Controller('direct-debits')
 export class DirectDebitsController {
   constructor(private readonly directDebitsService: DirectDebitsService) {}
-
-  @Get('/:idOrden')
-  get(@Param('idOrden') idOrden: number) {
-    return this.directDebitsService.getDirectDebitByIdOrden(idOrden)
-  }
 
   @Post()
   save(@Body() dto: SaveDirectDebitDto) {
@@ -59,5 +55,12 @@ export class DirectDebitsController {
   @Post('validate-loan/:idSolicitudDom')
   validateLoan(@Param('idSolicitudDom') idSolicitudDom: number) {
     return this.directDebitsService.updateStep(2, idSolicitudDom)
+  }
+
+  @Get(':idOrden')
+  get(@Param('idOrden') idOrden: number) {
+    if (typeof idOrden !== 'number') throw new BadRequestException('idOrden no válido')
+
+    return this.directDebitsService.getDirectDebitByIdOrden(idOrden)
   }
 }
