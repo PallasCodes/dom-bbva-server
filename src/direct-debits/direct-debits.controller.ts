@@ -20,6 +20,11 @@ import { ValidateClabeDto } from './dto/validate-clabe.dto'
 export class DirectDebitsController {
   constructor(private readonly directDebitsService: DirectDebitsService) {}
 
+  @Get('toku-webhook')
+  tokuWebHookGetHandler() {
+    return { message: 'Ok' }
+  }
+
   @Post()
   save(@Body() dto: SaveDirectDebitDto) {
     return this.directDebitsService.save(dto)
