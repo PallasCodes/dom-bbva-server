@@ -64,8 +64,6 @@ export class DirectDebitsController {
 
   @Get(':idOrden')
   get(@Param('idOrden') idOrden: number) {
-    if (typeof idOrden !== 'number') throw new BadRequestException('idOrden no válido')
-
     return this.directDebitsService.getDirectDebitByIdOrden(idOrden)
   }
 }
