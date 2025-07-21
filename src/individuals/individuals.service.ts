@@ -94,6 +94,13 @@ export class IndividualsService {
         folioOrden
       })
 
+      if (!contactInfo || !contactInfo.contacto) {
+        throw new NotFoundException({
+          msg: folioOrden,
+          code: 'CELLPHONE_NOT_FOUND'
+        })
+      }
+
       const url = await this.minifyUrl(
         `https://dom-bbva.netlify.app/?folio=${folioOrden}`
       )
@@ -101,8 +108,6 @@ export class IndividualsService {
         cellphone: contactInfo.contacto,
         msg: `Cambia tu cuenta CLABE para automatizar la domiciliación de tu crédito Intermercado ${url}`
       }
-
-      // TODO: insert or update dbo.solicitudDomiciliacion
 
       await this.sqlService.query('EXEC gbplus.dbo.fn_Sms @cellphone, @msg', payload)
 
@@ -114,14 +119,7 @@ export class IndividualsService {
         }
       }
     } catch (err) {
-      this.logger.error(err)
-      throw new InternalServerErrorException({
-        mensaje: {
-          error: true,
-          mensaje: 'Ocurrió un error al enviar el SMS. Vuelve a intentarlo',
-          mostrar: 'DIALOG'
-        }
-      })
+      throw err
     }
   }
 
