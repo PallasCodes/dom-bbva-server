@@ -23,9 +23,9 @@ export class IndividualsController {
     return this.individualsService.getBank(folioOrden)
   }
 
-  @Get('loan/:folioOrden')
-  getLoanInfo(@Param('folioOrden') folioOrden: string) {
-    return this.individualsService.getLoanInfo(folioOrden)
+  @Get('loan/:idPersonaFisica')
+  getLoanInfo(@Param('idPersonaFisica') idPersonaFisica: number) {
+    return this.individualsService.getLoanInfo(idPersonaFisica)
   }
 
   @Post('send-sms')
