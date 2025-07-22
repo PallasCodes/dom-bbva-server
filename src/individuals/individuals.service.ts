@@ -5,23 +5,22 @@ import {
   forwardRef,
   Inject,
   Injectable,
-  InternalServerErrorException,
   Logger,
   NotFoundException,
   UnauthorizedException
 } from '@nestjs/common'
 
+import { ConfigService } from '@nestjs/config'
+import { DirectDebitsService } from 'src/direct-debits/direct-debits.service'
 import { SqlService } from '../database/sql.service'
 import { ValidateCodeDto } from './dto/validate-code.dto'
-import { DirectDebitsService } from 'src/direct-debits/direct-debits.service'
-import { ConfigService } from '@nestjs/config'
 
 @Injectable()
 export class IndividualsService {
   private readonly validateCut: string
   private readonly getIndividualInfo: string
   private readonly getBankInfo: string
-  private readonly getLoanInfoQuery: string
+  private readonly getLoans: string
   private readonly getDirectDebits: string
   private readonly getContactInfoByFolio: string
   private readonly getSolicitudDom
@@ -51,8 +50,8 @@ export class IndividualsService {
       path.join(__dirname, 'queries', 'get-bank-info.sql'),
       'utf8'
     )
-    this.getLoanInfoQuery = fs.readFileSync(
-      path.join(__dirname, 'queries', 'get-loan-info.sql'),
+    this.getLoans = fs.readFileSync(
+      path.join(__dirname, 'queries', 'get-loans.sql'),
       'utf8'
     )
     this.getDirectDebits = fs.readFileSync(
@@ -92,6 +91,7 @@ export class IndividualsService {
     }
   }
 
+  // FIX: this should be an utilitary fn
   async sendSms(folioOrden: string) {
     try {
       const [contactInfo] = await this.sqlService.query(this.getContactInfoByFolio, {
@@ -167,15 +167,15 @@ export class IndividualsService {
     return individualInfo
   }
 
-  async getLoanInfo(folioOrden: string) {
-    const [loanInfo] = await this.sqlService.query(this.getLoanInfoQuery, {
-      folioOrden
+  async getLoanInfo(idPersonaFisica: number) {
+    const loans = await this.sqlService.query(this.getLoans, {
+      idPersonaFisica
     })
 
-    if (!loanInfo) {
-      throw new NotFoundException('No se encontró la información de tu folio')
+    if (!loans.length) {
+      throw new NotFoundException('No se encontró ningún folio')
     }
 
-    return loanInfo
+    return { loans }
   }
 }
