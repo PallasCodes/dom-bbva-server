@@ -12,5 +12,5 @@ export class ValidateClabeDto {
   rfc: string
 
   @IsInt()
-  idOrden: number
+  idPersonaFisica: number
 }

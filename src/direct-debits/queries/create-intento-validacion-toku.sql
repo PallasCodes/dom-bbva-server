@@ -1,1 +1,4 @@
-INSERT INTO dbo.intentoValidacionToku (idOrden) VALUES (@idOrden)
+INSERT INTO
+  dbo.intentoValidacionToku (idPersonaFisica)
+VALUES
+  (@idPersonaFisica)

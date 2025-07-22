@@ -1,2 +1,7 @@
-SELECT COUNT(idOrden) AS numTries FROM dbo.intentoValidacionToku WITH (NOLOCK) 
-WHERE idOrden = @idOrden AND tiempoCreacion >= DATEADD(HOUR, -24, GETDATE());
+SELECT
+  COUNT(idPersonaFisica) AS numTries
+FROM
+  dbo.intentoValidacionToku WITH (NOLOCK)
+WHERE
+  idPersonaFisica = @idPersonaFisica
+  AND tiempoCreacion >= DATEADD(HOUR, -24, GETDATE())

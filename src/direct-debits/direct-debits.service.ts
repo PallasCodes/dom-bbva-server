@@ -200,12 +200,12 @@ export class DirectDebitsService {
     return { message: 'OK' }
   }
 
-  async validateClabe({ clabe, idSocketIo, rfc, idOrden }: ValidateClabeDto) {
+  async validateClabe({ clabe, idSocketIo, rfc, idPersonaFisica }: ValidateClabeDto) {
     try {
-      const numTries = await this.getValidationTries(idOrden)
+      const numTries = await this.getValidationTries(idPersonaFisica)
       if (numTries >= 3) this.throwLimitReached()
 
-      await this.sqlService.query(this.createValidationTry, { idOrden })
+      await this.sqlService.query(this.createValidationTry, { idPersonaFisica })
 
       const verificationId = await this.verifyClabeWithToku(clabe, rfc, numTries)
 
@@ -214,7 +214,7 @@ export class DirectDebitsService {
         rfcIntroducido: rfc,
         idEvento: verificationId,
         idSocketIo,
-        idOrden
+        idPersonaFisica
       })
 
       return {
@@ -231,9 +231,9 @@ export class DirectDebitsService {
     }
   }
 
-  private async getValidationTries(idOrden: number): Promise<number> {
+  private async getValidationTries(idPersonaFisica: number): Promise<number> {
     const [result] = await this.sqlService.query(this.getNumTokuValidationTries, {
-      idOrden
+      idPersonaFisica
     })
     return result?.numTries || 0
   }
