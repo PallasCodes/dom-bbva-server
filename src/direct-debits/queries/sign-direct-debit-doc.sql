@@ -1,6 +1,7 @@
-UPDATE dbo.solicitudDomiciliacion
+UPDATE
+    dbo.solicitudDomiciliacion
 SET
     firmado = 1,
     tiempoFirma = GETDATE ()
 WHERE
-    idOrden = @idOrden
+    idPersonaFisica = @idPersonaFisica

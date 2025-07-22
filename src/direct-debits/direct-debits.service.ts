@@ -50,6 +50,8 @@ export class DirectDebitsService {
   private readonly updatePublicUrlDom: string
   private readonly updateProcessStepByIdPersonaFisica: string
   private readonly getDirectDebitInfo: string
+  private readonly saveSignatureUrl: string
+  private readonly getDirectDebits: string
 
   private readonly digitalSignature = 4202
   private readonly directDebit: number
@@ -70,6 +72,16 @@ export class DirectDebitsService {
 
     this.updateProcessStep = fs.readFileSync(
       path.join(__dirname, 'queries', 'update-process-step.sql'),
+      'utf8'
+    )
+
+    this.saveSignatureUrl = fs.readFileSync(
+      path.join(__dirname, 'queries', 'save-signature-url.sql'),
+      'utf8'
+    )
+
+    this.getDirectDebits = fs.readFileSync(
+      path.join(__dirname, 'queries', 'get-direct-debits.sql'),
       'utf8'
     )
 
@@ -405,11 +417,11 @@ export class DirectDebitsService {
 
   async uploadSignature(
     file: Express.Multer.File,
-    { idOrden, latitude, longitude, idSolicitudDom }: UploadSignatureDto
+    { latitude, longitude, idPersonaFisica }: UploadSignatureDto
   ) {
-    const codeName = `${idOrden}.${this.digitalSignature}`
+    const codeName = `${idPersonaFisica}.${this.digitalSignature}`
     const fileName = `${codeName}.${new Date().getTime()}.png`
-    const key = `${new Date().getFullYear()}/${idOrden}/${fileName}`
+    const key = `${new Date().getFullYear()}/personaFisica/${idPersonaFisica}/${fileName}`
     const params = {
       Bucket: this.bucket,
       Key: key,
@@ -422,38 +434,67 @@ export class DirectDebitsService {
       const publicUrl = await this.uploadFileToS3(params)
 
       const queryParams = {
-        idOrden,
-        publicUrl,
-        idDocumento: this.digitalSignature,
-        nombreArchivo: fileName,
-        tamanoArchivo: file.size,
-        s3Key: key
+        idPersonaFisica,
+        publicUrl
       }
-      await this.sqlService.query(this.createDocumentoOrden, queryParams)
+      await this.sqlService.query(this.saveSignatureUrl, queryParams)
 
-      const pdfUrl = await this.generateDirectDebitPdf({
-        idOrden: +idOrden,
-        latitude: +latitude,
-        longitude: +longitude
+      const ordenesResult = await this.sqlService.query(this.getDirectDebits, {
+        idPersonaFisica,
+        idDocumento: this.directDebit
       })
 
-      const codeNameDom = `${idOrden}.${this.directDebit}`
-      const fileNameDom = `${codeNameDom}.${new Date().getTime()}.pdf`
-      const keyDom = `${new Date().getFullYear()}/${idOrden}/${fileNameDom}`
+      const promises = ordenesResult.map(({ idOrden }) => {
+        return new Promise(async (accept) => {
+          const pdfUrl = await this.generateDirectDebitPdf({
+            idOrden,
+            latitude: +latitude,
+            longitude: +longitude
+          })
 
-      const queryParamsDom = {
-        idOrden,
-        publicUrl: pdfUrl,
-        idDocumento: this.directDebit,
-        nombreArchivo: fileNameDom,
-        tamanoArchivo: 0,
-        s3Key: keyDom
-      }
-      await this.sqlService.query(this.createDocumentoOrden, queryParamsDom)
+          const codeNameDom = `${idOrden}.${this.directDebit}`
+          const fileNameDom = `${codeNameDom}.${new Date().getTime()}.pdf`
+          const keyDom = `${new Date().getFullYear()}/${idOrden}/${fileNameDom}`
 
-      await this.updateStep(4, +idSolicitudDom)
+          const queryParamsDom = {
+            idOrden,
+            publicUrl: pdfUrl,
+            idDocumento: this.directDebit,
+            nombreArchivo: fileNameDom,
+            tamanoArchivo: 0,
+            s3Key: keyDom
+          }
+          await this.sqlService.query(this.createDocumentoOrden, queryParamsDom)
 
-      return { message: 'Firma digital guardada correctamente', pdfUrl }
+          accept(pdfUrl)
+        })
+      })
+
+      const pdfUrls = await Promise.all(promises)
+
+      // const pdfUrl = await this.generateDirectDebitPdf({
+      //   idOrden: +idOrden,
+      //   latitude: +latitude,
+      //   longitude: +longitude
+      // })
+
+      // const codeNameDom = `${idOrden}.${this.directDebit}`
+      // const fileNameDom = `${codeNameDom}.${new Date().getTime()}.pdf`
+      // const keyDom = `${new Date().getFullYear()}/${idOrden}/${fileNameDom}`
+
+      // const queryParamsDom = {
+      //   idOrden,
+      //   publicUrl: pdfUrl,
+      //   idDocumento: this.directDebit,
+      //   nombreArchivo: fileNameDom,
+      //   tamanoArchivo: 0,
+      //   s3Key: keyDom
+      // }
+      // await this.sqlService.query(this.createDocumentoOrden, queryParamsDom)
+
+      await this.updateStepByIdPersonaFisica(4, idPersonaFisica)
+
+      return { message: 'Firma digital guardada correctamente', pdfUrls }
     } catch (error) {
       this.logger.error('Error uploading file to S3', error)
       throw new InternalServerErrorException('Error al guardar la firma digital')
@@ -510,67 +551,81 @@ export class DirectDebitsService {
     }
   }
 
-  async signDirectDebitDoc(idOrden: number, idSolicitudDom: number) {
+  async signDirectDebitDoc(idPersonaFisica: number) {
     try {
-      await this.getDirectDebitByIdOrden(idOrden)
+      // await this.getDirectDebitByIdOrden(idOrden)
+      // await this.getDirectDebitByIdPersonaFisica(idOrden)
+      const ordenesResult = await this.sqlService.query(this.getDirectDebits, {
+        idPersonaFisica,
+        idDocumento: this.directDebit
+      })
+      const ordenes = ordenesResult.map((res) => res.idOrden)
 
-      await this.sqlService.query(this.signDirectDebit, { idOrden })
-      await this.updateStep(5, idSolicitudDom)
+      await this.sqlService.query(this.signDirectDebit, { idPersonaFisica })
+      await this.updateStepByIdPersonaFisica(5, idPersonaFisica)
 
-      const [result] = await this.sqlService.query(
-        `EXEC dbo.sp_jasper_domiciliacionBBVA @idOrden = ${idOrden}`
-      )
+      const promises = ordenes.map((idOrden) => {
+        return new Promise(async (accept) => {
+          const [result] = await this.sqlService.query(
+            `EXEC dbo.sp_jasper_domiciliacionBBVA @idOrden = ${idOrden}`
+          )
 
-      if (!result) {
-        throw new NotFoundException('No se encontró la información de tu credito')
-      }
-      result.showTimeStamp = true
-      const pdfBuffer = await this.generateDebitDocument(result)
+          if (!result) {
+            throw new NotFoundException('No se encontró la información de tu credito')
+          }
+          result.showTimeStamp = true
+          const pdfBuffer = await this.generateDebitDocument(result)
 
-      const codeName = `${idOrden}.${this.directDebit}`
-      const fileName = `${codeName}.${new Date().getTime()}.pdf`
-      const key = `${new Date().getFullYear()}/${idOrden}/${fileName}`
+          const codeName = `${idOrden}.${this.directDebit}`
+          const fileName = `${codeName}.${new Date().getTime()}.pdf`
+          const key = `${new Date().getFullYear()}/${idOrden}/${fileName}`
 
-      const params: PutObjectCommandInput = {
-        Bucket: this.bucket,
-        Key: key,
-        Body: pdfBuffer,
-        ContentType: 'application/pdf',
-        ACL: ObjectCannedACL.public_read
-      }
+          const params: PutObjectCommandInput = {
+            Bucket: this.bucket,
+            Key: key,
+            Body: pdfBuffer,
+            ContentType: 'application/pdf',
+            ACL: ObjectCannedACL.public_read
+          }
 
-      const pdfUrl = await this.uploadFileToS3(params)
+          const pdfUrl = await this.uploadFileToS3(params)
 
-      await this.sqlService.query(this.updatePublicUrlDom, {
-        idDocumento: this.directDebit,
-        idOrden,
-        publicUrl: pdfUrl,
-        s3Key: key
+          await this.sqlService.query(this.updatePublicUrlDom, {
+            idDocumento: this.directDebit,
+            idOrden,
+            publicUrl: pdfUrl,
+            s3Key: key
+          })
+
+          const bufferFile = Buffer.from(pdfBuffer)
+
+          const uploadEdicomDocPayload = {
+            idOrden,
+            file: bufferFile,
+            documentName: idOrden.toString(),
+            documentTitle: `${idOrden}-domiciliacion.pdf`,
+            tags: idOrden.toString()
+          }
+
+          const UUID = await this.edicomService.uploadFile(uploadEdicomDocPayload)
+
+          const saveEdicomDocPayload = {
+            idOrden: uploadEdicomDocPayload.idOrden,
+            documentName: uploadEdicomDocPayload.documentName,
+            documentTitle: uploadEdicomDocPayload.documentTitle,
+            folder: uploadEdicomDocPayload.idOrden.toString(),
+            tags: uploadEdicomDocPayload.idOrden.toString(),
+            UUID
+          }
+          await this.edicomService.saveEdicomDoc(saveEdicomDocPayload)
+
+          accept(pdfUrl)
+        })
       })
 
-      const bufferFile = Buffer.from(pdfBuffer)
+      const pdfUrls = await Promise.all(promises)
 
-      const uploadEdicomDocPayload = {
-        idOrden,
-        file: bufferFile,
-        documentName: idOrden.toString(),
-        documentTitle: `${idOrden}-domiciliacion.pdf`,
-        tags: idOrden.toString()
-      }
-
-      const UUID = await this.edicomService.uploadFile(uploadEdicomDocPayload)
-
-      const saveEdicomDocPayload = {
-        idOrden: uploadEdicomDocPayload.idOrden,
-        documentName: uploadEdicomDocPayload.documentName,
-        documentTitle: uploadEdicomDocPayload.documentTitle,
-        folder: uploadEdicomDocPayload.idOrden.toString(),
-        tags: uploadEdicomDocPayload.idOrden.toString(),
-        UUID
-      }
-      await this.edicomService.saveEdicomDoc(saveEdicomDocPayload)
-
-      return { message: 'Documento firmado', pdfUrl }
+      return { message: 'Documento firmado', pdfUrls }
     } catch (err) {
       throw new InternalServerErrorException('Ocurrió un error al firmar el documento')
     }

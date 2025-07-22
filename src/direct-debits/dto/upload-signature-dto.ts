@@ -5,12 +5,7 @@ export class UploadSignatureDto {
   @IsInt()
   @Min(1)
   @Type(() => Number)
-  idOrden: number
-
-  @IsInt()
-  @Min(1)
-  @Type(() => Number)
-  idSolicitudDom: number
+  idPersonaFisica: number
 
   @IsNumber()
   @Type(() => Number)

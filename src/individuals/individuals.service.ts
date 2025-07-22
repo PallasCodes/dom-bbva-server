@@ -24,6 +24,7 @@ export class IndividualsService {
   private readonly getDirectDebits: string
   private readonly getContactInfoByFolio: string
   private readonly getSolicitudDom
+  private readonly getDirectDebitsPdfUrls: string
 
   private readonly directDebit: number
   private readonly bitlyToken: string
@@ -40,6 +41,10 @@ export class IndividualsService {
 
     this.validateCut = fs.readFileSync(
       path.join(__dirname, 'queries', 'validate-cut.sql'),
+      'utf8'
+    )
+    this.getDirectDebitsPdfUrls = fs.readFileSync(
+      path.join(__dirname, 'queries', 'get-direct-debits-pdf-urls.sql'),
       'utf8'
     )
     this.getIndividualInfo = fs.readFileSync(
@@ -68,6 +73,7 @@ export class IndividualsService {
     )
   }
 
+  // FIX: this should be an utilitary fn
   async minifyUrl(url: string): Promise<string> {
     try {
       const response = await fetch('https://api-ssl.bitly.com/v4/shorten', {
@@ -91,7 +97,6 @@ export class IndividualsService {
     }
   }
 
-  // FIX: this should be an utilitary fn
   async sendSms(folioOrden: string) {
     try {
       const [contactInfo] = await this.sqlService.query(this.getContactInfoByFolio, {
@@ -144,7 +149,17 @@ export class IndividualsService {
       idPersonaFisica: dto.idPersonaFisica
     })
 
-    return { message: 'Validación CUT exitosa', directDebits, solDom }
+    const publicUrlsRes = await this.sqlService.query(this.getDirectDebitsPdfUrls, {
+      idPersonaFisica: dto.idPersonaFisica,
+      idDocumento: this.directDebit
+    })
+    const publicUrls = publicUrlsRes.map((res) => res.publicUrl)
+
+    return {
+      message: 'Validación CUT exitosa',
+      directDebits,
+      solDom: { ...solDom, publicUrls }
+    }
   }
 
   async getIndividual(idPersonaFisica: number) {

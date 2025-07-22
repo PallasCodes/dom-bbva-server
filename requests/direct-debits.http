@@ -10,16 +10,16 @@ POST http://localhost:3000/api/direct-debits/toku-webhook
 Content-Type: application/json
 
 {
-    "id": "wheve_qP84V3pq0KZ7gkHQW0Uc8t6ZUvA4Fj-I",
+    "id": "wheve_kexFBYQDxiKDAeWqbuqQY-M7NvHpKAqG",
     "event_type": "bank_account_verification.result",
     "bank_account_verification": {
-        "id_bank_account_verification": "bav_iIZR8ZedLBl5ruuSv_UgbJC814qufMDh",
+        "id_bank_account_verification": "bav_TUugM2ywdxaVoqkl14bVNv_fh0NrMKDR",
         "status": "DONE",
         "validation": "SUCCESS",
         "reason": null,
         "voucher_url": {
-            "pdf": "https://api-storage.trytoku.com/v1/streaming/2olfx1mwLZ1JJdH5gYOqlcGtYlFpC4SxJ6C2OM0jIfwg1KtJf2osVmItI9pzuay_wzsFFXCgvFYNZ32D_xbxe1FRppN5LB-kRjCmwHIOGuxVS_phW5O-kgoNnpVz_-RWS2NTlnmJ8NvlYNc1jugQ6lZ-fGBffeNcZ8ZDnLhf98HuQPGUCi9ddeEqySJegSp1EV45Xsv-12Rb4zmmIQ9Q6ODJ7bOtPAgd2yYmi-4mK_mPPYolT6aT3bl1rNIEdn1I_Mnlvz7dcxTJ2_Aq_UvWK21Z09aCV1zQVvCsijNgCV6-Rgw8xJa5tJgTASXfb46fru8zSi_UDSaQMS6ovE4cZQUJrCCOUaFj00qiNK-2Ql74VA7GDFjeNQ9cXu6o0YM94dLHNBWTolHv5l95b5DHsyP4hcQDQI1wGeEFnVJmpL-qMSJDe7YuQQzlswzWl6_u0l1jk0d7GygVjBECIFGBnDkkLh0qMXxw7t1QPFHFO1rn1dE15p31shbOsXYqduIGnlrqMEzpbnxWmJfAzGs0wDSaqxlgnFOzbN9WSsiXpePwy7YjOvPa6JlLN9AbtXrxnh_fWL5pcQhL-evM97qCXy8gm7KZxnmrM5cZ4E0T5bVSrjqCACj_W6EdEZVhkB-b6EhO10LSB38LdeozllmBwk9R_AcKj0-RgelDhOZly2kE4fMqCE2Cy7Agv1BFGrKOfyiXMcIAr_wB0p4s",
-            "xml": "https://api-storage.trytoku.com/v1/streaming/shGvoDkzWCHYv9U33NJclK2SzGC-nQjKiho0bxwva9w795Wa7LcIlQ-YCtYzbUtk9QHOcN0lUYcCm_t21jWL04qQZvgKnZ0W2wklsepwcorg2YiqEABlJdo1bP41LWkJM1f__ADif0tqpCv6CIsDd9z5vahYpV2Id6pzE_M9k4pcYmtJsNdHiNf1fi3eh8ui-dKgYV0DJ33nNfazXFFVl-MD_X2NhMHZ8ixmyq0SYUFp-JHSAXnTThfGZQWyDfG3GZWcFMcatMDhipjzqLNGdYVqdhrx6tDZ66vnPwG7kGRcMFYv1OI6YnwwcqMa8tocsQolt4Qi6C15pmX-ITxjY-8biJwZmivZyZgbXXSQrnI7-G59j7dnL0UR9JJzoMAMVx_zgTwM5HZzAvH0PO8jAl3inNkUnATSz8nCaDhr4i8aCQuA_QZbzXikwzeJmtfiX2fW2Qq71wE2Uaji0tGFR33r0zx5an_cfgEjBjhmjL653RqDZxsNC3AeqqSwd4kw6mY1EBJTMs3cRP_uWxP4Nnd8PNGsRYEzsbeD6kbeyPPo3vXXPM8eeIw-7gv169xO8H5ou7REXq8U6ju0Jhgd0qBwhH5ijNuFhcQxntT5OT2FWAb0RKu_7OR9tm74rgmjokA2pJ9t4ZD5x4u3DEA5j3wXkXmTOwaRtQ3qi-UatsUDtGUMZJGk0c4YJrYdlTCc-cmUrW3g7ibuP_GD"
+            "pdf": "https://api-storage.trytoku.com/v1/streaming/soYOJ6KBXCj1dd6foN7Msy_nBaxAc95Gyi6BU-NzizGN_cpnHMVe_UlkADOLHdK-X9P95TGs38aNhrx7yBRGHbnmbRP6ApNLbIrTsuddMxnV2taBQ890qtRhf2Is65_707uEvm8ID4SyzFDy-PVki01cnTD48R9CFm34m0-tNlvnAVmrE4_tGJWjZJNZd6_Dk_7Nx_5aJlI5Jg3mmmgiFltmMlk7WfW34WhRVV_J7icn3-b4Ievs7FECNymRl4s7_FjDRQomy2Yh4iRYoAYzGgPLENEoXwGTwMO1L1mzyPsHhS229yRKrS8TOBhVkmm_sBrr4yaWDSRZ7_fbFY1Fr4Z4YeJm6bJj1HjpGtqseOZpkVSHOZbU59mJtoTtFcJJ5LAxRXQAlYHj1U0Ugy3C5wJnw0rIe-KX7RFSdTXdH4d5Rr_0U5enkm1ARplSMOj7KRzC_pcfMCuMMz7KzGo39mjKifBJ2EA1LlVICPquDXaynYeznhEOBY1mqfGn7bqYcy1Rv7p8PWUnYz5Vbdp4S-3XoOfvIYmLo8wSLvn4UDhbj0I0vrLMKGneSSta2w8B49_N6NRIMcgnYLvVz1eTApNvYdtWKqoCpr-zT9VJ0Uo8ZBjKuxaZ4JtQGqb0J9ENNDNsT2GLmyWrgSkWDM_EKZoHii1ghGx14wedB8tQ98Y4UUP6aRHjLxygAsB1-YraZsOp_MWtZFfOmwa1",
+            "xml": "https://api-storage.trytoku.com/v1/streaming/mvjcxf9EeDzp3U71TP8Uavz5DVZwx6nY1q6OymMGa_RAcopOvet6PyAaplwjVQSwbI0d4uwzko-r_5H_Qf3pawihtLxr_TWoJLrilKB-_wZYGy6tMimpIayydacqtEOr0IlTRgT2OZyykFXnBq1OWsAKPElNtp-3uFalvx4vJAa3vxZQdq4qBBtkj6LDUQ_cAjdv_dwJdCZSTQt_j3MzIJCP9-Ve4U7jrYsK_VJrj4L0KqrXZhAd3_8s_MEHLIy1aVgK64Ht5vh0Iqy8Atn4dx4o-LQGklgMJOEC8aKN3Cr4jqfcseU1Nc9F1pCAINfQYs9GdLNQLBO0zOpj1s8KLE5Uawu5-dJzj8it1C4Jkkjf5_fiucPyBXm-wIrVJ7VVkEEz3nTxerH3nE9Y5oZaFlyQDQXU4oGKCcFPu6f-HzW7bIutfd2ffgiIV9H2MCNQ9Swj9vqDixdiMbBR7wOknVgqlI18vvyFBlM-jQ4JweRJetMLQQaeFZECp19KDlicY-L2eN0DTgOv2cK0dRL4PuORrVmG5woDw8SsFsQeGEToTMkpXcMJB6KhM5Ktzu28kAMs9eq7reChYqumxzjjUS44ENHZy7qxlF_lcgXsYZZcrUdRc_M6ldmm3LqyTegUHY0bp2G23t7P0I4AKB_O_womnKK8IXQQsngAf1fb05h-C6rVlnUB5rKyaSgQQ7ffKn2tOer_k5g2gWrT"
         },
         "account_number": "012840015093214334",
         "customer_identifier": "TOMB971024UW4",
@@ -30,15 +30,16 @@ Content-Type: application/json
             "receiver_name": "BERNARDO TORRES MEDINA",
             "receiver_account_type": "40",
             "operation_date": "2025-07-22",
-            "operation_time": "12:49:20",
+            "operation_time": "13:43:44",
             "spei_id": "40012",
-            "signature": "QzC1YAR0Vk1QTM0H0qavo1DRjoxVE3TgfOElzj5ahFM6fxNiilZCJHI4CZPIrdn7kc+7n6qMjSAFIv+XL2w+CCEiX6+MsjXxfGboH3kG86gYNkWwerqJQkAvDF7u6b/FPa5C3/IYm5rJhKrux8fOyfqJK/FLZ8chNH8PMJpH/C5mb9Ir1WXosWlNBAT39Dbqz60tSfLUQQUVxjvejZJgCdn117Ch3zereX+H6Mm0DUod9+oUmAMeaLu2eU6RWf/GJs9rHFOUkFSsjpJrHcIM3CfaN9OwaKoDLhOIu818kUPmkvAhABNlHDQrbNs+5CTXSoH8fV1YhkJkungGG+cEaQ==",
+            "signature": "YeEWN0PwXuMPSyG3/3gPs7o5kCu56Y07B/klMiPeT4PbRKpMF4lBkhCQcmtjcoIRR8F0xJLHCzq5CEKs7u1IeGaaktDBY07nGKRgnu1jnz+mKaxd1o20s+RVuZWFZGUBn1XRyScZT6Vu1Ev8b3wUK1QvnP+LFQd5yEDJbj8yBqX8IIJ1PGTIoSFtcZty2uJMpPk8V+OVgf3DAD6epI9qKbqpboVObPD1w8k8ifke2JYWcqoi38R0nD8lFCs6KGFUa7zrGzZMNLuq51qVi6UPzV5N7TkS5R+M3/t+uIbL7ETFC/tYrKSYx6Q47ChTWueNH7dZnDHHotF2E3FJr4Ih4w==",
             "certificate_number": "00001000000511796968",
-            "cda_chain": "||01|22072025|22072025|124920|40012|STP|TRYTOKU S DE RL DE CV|40|646180328500700002|TRY220304U60|BBVA BANCOMER|BERNARDO TORRES MEDINA|40|012840015093214334|TOMB971024UW4|Validation transfer|000000000000000.00|000000000000000.01|NA|NA|0|0|NA|0|000000000000000.00|00001000000511796968||QzC1YAR0Vk1QTM0H0qavo1DRjoxVE3TgfOElzj5ahFM6fxNiilZCJHI4CZPIrdn7kc+7n6qMjSAFIv+XL2w+CCEiX6+MsjXxfGboH3kG86gYNkWwerqJQkAvDF7u6b/FPa5C3/IYm5rJhKrux8fOyfqJK/FLZ8chNH8PMJpH/C5mb9Ir1WXosWlNBAT39Dbqz60tSfLUQQUVxjvejZJgCdn117Ch3zereX+H6Mm0DUod9+oUmAMeaLu2eU6RWf/GJs9rHFOUkFSsjpJrHcIM3CfaN9OwaKoDLhOIu818kUPmkvAhABNlHDQrbNs+5CTXSoH8fV1YhkJkungGG+cEaQ==",
-            "tracking_id": "2025072290646VCC1849142YERWQ"
+            "cda_chain": "||01|22072025|22072025|134344|40012|STP|TRYTOKU S DE RL DE CV|40|646180328500700002|TRY220304U60|BBVA BANCOMER|BERNARDO TORRES MEDINA|40|012840015093214334|TOMB971024UW4|Validation transfer|000000000000000.00|000000000000000.01|NA|NA|0|0|NA|0|000000000000000.00|00001000000511796968||YeEWN0PwXuMPSyG3/3gPs7o5kCu56Y07B/klMiPeT4PbRKpMF4lBkhCQcmtjcoIRR8F0xJLHCzq5CEKs7u1IeGaaktDBY07nGKRgnu1jnz+mKaxd1o20s+RVuZWFZGUBn1XRyScZT6Vu1Ev8b3wUK1QvnP+LFQd5yEDJbj8yBqX8IIJ1PGTIoSFtcZty2uJMpPk8V+OVgf3DAD6epI9qKbqpboVObPD1w8k8ifke2JYWcqoi38R0nD8lFCs6KGFUa7zrGzZMNLuq51qVi6UPzV5N7TkS5R+M3/t+uIbL7ETFC/tYrKSYx6Q47ChTWueNH7dZnDHHotF2E3FJr4Ih4w==",
+            "tracking_id": "2025072290646VCC1943388XUFWG"
         }
     }
 }
+
 
 
 ###

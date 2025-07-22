@@ -49,12 +49,9 @@ export class DirectDebitsController {
     return this.directDebitsService.uploadSignature(file, body)
   }
 
-  @Post('sign/:idOrden')
-  signDirectDebitDoc(
-    @Param('idOrden') idOrden: number,
-    @Body('idSolicitudDom') idSolicitudDom: number
-  ) {
-    return this.directDebitsService.signDirectDebitDoc(idOrden, idSolicitudDom)
+  @Post('sign/:idPersonaFisica')
+  signDirectDebitDoc(@Param('idPersonaFisica') idPersonaFisica: number) {
+    return this.directDebitsService.signDirectDebitDoc(idPersonaFisica)
   }
 
   @Post('validate-loan/:idPersonaFisica')
