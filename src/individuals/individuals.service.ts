@@ -22,8 +22,9 @@ export class IndividualsService {
   private readonly getIndividualInfo: string
   private readonly getBankInfo: string
   private readonly getLoanInfoQuery: string
-  private readonly getSolDomByFolio: string
+  private readonly getDirectDebits: string
   private readonly getContactInfoByFolio: string
+  private readonly getSolicitudDom
 
   private readonly directDebit: number
   private readonly bitlyToken: string
@@ -54,8 +55,12 @@ export class IndividualsService {
       path.join(__dirname, 'queries', 'get-loan-info.sql'),
       'utf8'
     )
-    this.getSolDomByFolio = fs.readFileSync(
-      path.join(__dirname, 'queries', 'get-sol-dom-by-folio.sql'),
+    this.getDirectDebits = fs.readFileSync(
+      path.join(__dirname, 'queries', 'get-direct-debits.sql'),
+      'utf8'
+    )
+    this.getSolicitudDom = fs.readFileSync(
+      path.join(__dirname, 'queries', 'get-solicitud-dom.sql'),
       'utf8'
     )
     this.getContactInfoByFolio = fs.readFileSync(
@@ -130,12 +135,16 @@ export class IndividualsService {
       throw new UnauthorizedException('Folio o código CUT incorrecto')
     }
 
-    const [solDom] = await this.sqlService.query(this.getSolDomByFolio, {
-      folioOrden: dto.folioOrden,
+    const directDebits = await this.sqlService.query(this.getDirectDebits, {
+      idPersonaFisica: dto.idPersonaFisica,
       idDocumento: this.directDebit
     })
 
-    return { message: 'Validación CUT exitosa', solDom }
+    const [solDom] = await this.sqlService.query(this.getSolicitudDom, {
+      idPersonaFisica: dto.idPersonaFisica
+    })
+
+    return { message: 'Validación CUT exitosa', directDebits, solDom }
   }
 
   async getIndividual(folioOrden: string) {

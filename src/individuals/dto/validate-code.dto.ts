@@ -1,8 +1,8 @@
-import { IsNumber, IsString, MaxLength, MinLength } from 'class-validator'
+import { IsInt, IsNumber, IsString, MaxLength, MinLength } from 'class-validator'
 
 export class ValidateCodeDto {
-  @IsString()
-  folioOrden: string
+  @IsInt()
+  idPersonaFisica: number
 
   @IsString()
   @MinLength(4)

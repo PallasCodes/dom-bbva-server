@@ -16,3 +16,11 @@ GET http://localhost:3000/api/individuals/bank/CDI721953VDW
 
 ### 
 POST http://localhost:3000/api/individuals/send-sms/CDI700046VDW
+
+###
+POST http://localhost:3000/api/individuals/send-sms
+Content-Type: application/json
+
+{
+  "folios": ["CDI700046VDW"]
+}
