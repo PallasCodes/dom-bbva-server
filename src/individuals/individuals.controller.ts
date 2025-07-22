@@ -13,9 +13,9 @@ export class IndividualsController {
     return this.individualsService.validateIndividual(dto)
   }
 
-  @Get(':folioOrden')
-  getIndividualInfo(@Param('folioOrden') folioOrden: string) {
-    return this.individualsService.getIndividual(folioOrden)
+  @Get(':idPersonaFisica')
+  getIndividualInfo(@Param('idPersonaFisica') idPersonaFisica: number) {
+    return this.individualsService.getIndividual(idPersonaFisica)
   }
 
   @Get('bank/:folioOrden')

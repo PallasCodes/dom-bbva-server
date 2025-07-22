@@ -49,6 +49,7 @@ export class DirectDebitsService {
   private readonly saveSeal: string
   private readonly updatePublicUrlDom: string
   private readonly updateProcessStepByIdPersonaFisica: string
+  private readonly getDirectDebitInfo: string
 
   private readonly digitalSignature = 4202
   private readonly directDebit: number
@@ -69,6 +70,11 @@ export class DirectDebitsService {
 
     this.updateProcessStep = fs.readFileSync(
       path.join(__dirname, 'queries', 'update-process-step.sql'),
+      'utf8'
+    )
+
+    this.getDirectDebitInfo = fs.readFileSync(
+      path.join(__dirname, 'queries', 'get-direct-debit-info.sql'),
       'utf8'
     )
 
@@ -145,6 +151,16 @@ export class DirectDebitsService {
     })
 
     this.bucket = configService.get('AWS_S3_BUCKET') as string
+  }
+
+  async getDirectDebitByIdPersonaFisica(idPersonaFisica: number) {
+    const [result] = await this.sqlService.query(this.getDirectDebitInfo, {
+      idPersonaFisica
+    })
+
+    if (!result) throw new NotFoundException('Crédito no encontrado')
+
+    return result
   }
 
   async getDirectDebitByIdOrden(idOrden: number) {

@@ -147,9 +147,9 @@ export class IndividualsService {
     return { message: 'Validación CUT exitosa', directDebits, solDom }
   }
 
-  async getIndividual(folioOrden: string) {
+  async getIndividual(idPersonaFisica: number) {
     const [individualInfo] = await this.sqlService.query(this.getIndividualInfo, {
-      folioOrden
+      idPersonaFisica
     })
 
     if (!individualInfo) {

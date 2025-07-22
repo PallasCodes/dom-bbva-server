@@ -62,8 +62,8 @@ export class DirectDebitsController {
     return this.directDebitsService.updateStepByIdPersonaFisica(2, idPersonaFisica)
   }
 
-  @Get(':idOrden')
-  get(@Param('idOrden') idOrden: number) {
-    return this.directDebitsService.getDirectDebitByIdOrden(idOrden)
+  @Get(':idPersonaFisica')
+  get(@Param('idPersonaFisica') idPersonaFisica: number) {
+    return this.directDebitsService.getDirectDebitByIdPersonaFisica(idPersonaFisica)
   }
 }
