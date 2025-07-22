@@ -48,6 +48,7 @@ export class DirectDebitsService {
   private readonly saveClabe: string
   private readonly saveSeal: string
   private readonly updatePublicUrlDom: string
+  private readonly updateProcessStepByIdPersonaFisica: string
 
   private readonly digitalSignature = 4202
   private readonly directDebit: number
@@ -73,6 +74,11 @@ export class DirectDebitsService {
 
     this.createVerificacionToku = fs.readFileSync(
       path.join(__dirname, 'queries', 'create-verificacion-toku.sql'),
+      'utf8'
+    )
+
+    this.updateProcessStepByIdPersonaFisica = fs.readFileSync(
+      path.join(__dirname, 'queries', 'update-step-by-id-persona-fisica.sql'),
       'utf8'
     )
 
@@ -164,6 +170,15 @@ export class DirectDebitsService {
     await this.sqlService.query(this.updateProcessStep, {
       step,
       idSolicitudDom
+    })
+
+    return { message: 'OK' }
+  }
+
+  async updateStepByIdPersonaFisica(step: number, idPersonaFisica: number) {
+    await this.sqlService.query(this.updateProcessStepByIdPersonaFisica, {
+      step,
+      idPersonaFisica
     })
 
     return { message: 'OK' }
