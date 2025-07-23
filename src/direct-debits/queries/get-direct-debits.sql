@@ -11,4 +11,4 @@ FROM
 WHERE
     o.idEntidad IN (8, 50, 117, 197, 207)
     AND pf.idPersonaFisica = @idPersonafisica
-    AND o.idEstatus IN (2609 2656 2670 2678 2682 2688)
+    AND o.idEstatus IN (2609, 2656, 2670, 2678, 2682, 2688)

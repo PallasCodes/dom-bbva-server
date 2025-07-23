@@ -34,7 +34,7 @@ FROM
 WHERE
     o.idPersonaFisica = @idPersonaFisica
     AND o.idEntidad IN (8, 50, 117, 197, 207)
-    AND o.idEstatus IN (2609 2656 2670 2678 2682 2688);
+    AND o.idEstatus IN (2609, 2656, 2670, 2678, 2682, 2688);
 
 INSERT INTO
     dbo.ordenHistorialCondicionesSolicitud(idOrden, tiempoCreacion, idPersonal, clabeDom)
@@ -48,4 +48,4 @@ FROM
 WHERE
     o.idPersonaFisica = @idPersonaFisica
     AND o.idEntidad IN (8, 50, 117, 197, 207)
-    AND o.idEstatus IN (2609 2656 2670 2678 2682 2688);
+    AND o.idEstatus IN (2609, 2656, 2670, 2678, 2682, 2688);
