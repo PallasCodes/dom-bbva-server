@@ -354,8 +354,10 @@ export class DirectDebitsService {
 
     if (eventPayload.valid) {
       this.sqlService.query(this.saveClabe, {
-        idOrden: verificacionToku.idOrden,
-        clabe: verificacionToku.clabeIntroducida
+        clabe: verificacionToku.clabeIntroducida,
+        idPersonaFisica: verificacionToku.idPersonaFisica,
+        idTipo: 21002, // domiliciacion
+        idBanco: 3 // bbva
       })
     }
 

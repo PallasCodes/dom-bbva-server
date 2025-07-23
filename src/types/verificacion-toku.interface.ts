@@ -17,4 +17,5 @@ export interface VerificacionToku {
   procesoDom?: boolean | null // bit, nullable
   idSocketIo: string
   idOrden?: string
+  idPersonaFisica?: number
 }
