@@ -29,16 +29,17 @@ export class IndividualsController {
   }
 
   @Post('send-sms')
-  async sendDirectDebitSms(@Body('folios') folios: string[]) {
+  async sendDirectDebitSms(@Body('clientes') clientes: number[]) {
     const failedPromises: string[] = []
-    for (let i = 0; i < folios.length; i += 50) {
+
+    for (let i = 0; i < clientes.length; i += 50) {
       const promises: Promise<any>[] = []
 
       for (let j = 0; j < 50; j++) {
-        const folio = folios[i + j]
+        const cliente = clientes[i + j]
 
-        if (folio) {
-          promises.push(this.individualsService.sendSms(folio))
+        if (cliente) {
+          promises.push(this.individualsService.sendSms(cliente))
         } else {
           break
         }

@@ -97,22 +97,22 @@ export class IndividualsService {
     }
   }
 
-  async sendSms(folioOrden: string) {
+  async sendSms(idPersonaFisica: number) {
     try {
       const [contactInfo] = await this.sqlService.query(this.getContactInfoByFolio, {
         idTipo: 1302,
-        folioOrden
+        idPersonaFisica
       })
 
       if (!contactInfo || !contactInfo.contacto) {
         throw new NotFoundException({
-          msg: folioOrden,
+          msg: idPersonaFisica,
           code: 'CELLPHONE_NOT_FOUND'
         })
       }
 
       const url = await this.minifyUrl(
-        `https://dom-bbva.netlify.app/?folio=${folioOrden}`
+        `https://dom-bbva.netlify.app/?cliente=${idPersonaFisica}`
       )
       const payload = {
         cellphone: contactInfo.contacto,

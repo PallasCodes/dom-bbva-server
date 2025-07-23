@@ -1,8 +1,7 @@
-SELECT pfc.contacto
-FROM dbo.personaFisicaContacto pfc
-WITH (NOLOCK)
-    LEFT JOIN dbo.orden o
-WITH (NOLOCK) ON o.idPersonaFisica = pfc.idPersonaFisica
+SELECT
+    pfc.contacto
+FROM
+    dbo.personaFisicaContacto pfc WITH (NOLOCK)
 WHERE
-    o.folioInterno = @folioOrden
+    pfc.idPersonaFisisca = @idPersonaFisica
     AND pfc.idTipo = @idTipo
