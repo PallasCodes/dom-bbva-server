@@ -373,17 +373,20 @@ export class DirectDebitsService {
   async generateDirectDebitPdf({
     idOrden,
     latitude,
-    longitude
+    longitude,
+    idPersonaFisica
   }: {
     idOrden: number
     latitude: number
     longitude: number
+    idPersonaFisica
   }): Promise<string> {
     try {
       const pdfBuffer = await this.getDirectDebitDocument({
         idOrden,
         latitude,
-        longitude
+        longitude,
+        idPersonaFisica
       })
 
       const codeName = `${idOrden}.${this.directDebit}`
@@ -451,7 +454,8 @@ export class DirectDebitsService {
           const pdfUrl = await this.generateDirectDebitPdf({
             idOrden,
             latitude: +latitude,
-            longitude: +longitude
+            longitude: +longitude,
+            idPersonaFisica
           })
 
           const codeNameDom = `${idOrden}.${this.directDebit}`
@@ -506,11 +510,13 @@ export class DirectDebitsService {
   async getDirectDebitDocument({
     idOrden,
     latitude,
-    longitude
+    longitude,
+    idPersonaFisica
   }: {
     idOrden: number
     latitude: number
     longitude: number
+    idPersonaFisica: number
   }): Promise<Uint8Array<ArrayBufferLike>> {
     const [result] = await this.sqlService.query(
       `EXEC dbo.sp_jasper_domiciliacionBBVA @idOrden = ${idOrden}`
@@ -525,7 +531,7 @@ export class DirectDebitsService {
     result.showTimeStamp = false
 
     await this.sqlService.query(this.saveSeal, {
-      idOrden,
+      idPersonaFisica,
       selloClear,
       sello: result.encryptedSeal
     })

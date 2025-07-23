@@ -1,5 +1,7 @@
-UPDATE dbo.solicitudDomiciliacion
-SET 
+UPDATE
+  dbo.solicitudDomiciliacion
+SET
   selloClear = @selloClear,
   sello = @sello
-WHERE idOrden = @idOrden
+WHERE
+  idPersonaFisica = @idPersonaFisica
