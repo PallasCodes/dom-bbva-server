@@ -1,7 +1,3 @@
-BEGIN TRY;
-
-BEGIN TRANSACTION;
-
 UPDATE
     infoDom
 SET
@@ -51,13 +47,3 @@ FROM
 WHERE
     o.idPersonaFisica = @idPersonaFisica
     AND o.idEntidad IN (8, 50, 117, 197, 207);
-
-COMMIT;
-
-END TRY;
-
-BEGIN CATCH ROLLBACK;
-
-THROW;
-
-END CATCH;
