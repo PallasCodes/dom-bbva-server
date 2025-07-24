@@ -1,8 +1,7 @@
-import { Body, Controller, Get, NotFoundException, Param, Post } from '@nestjs/common'
+import { Body, Controller, Get, Param, Post } from '@nestjs/common'
 
 import { ValidateCodeDto } from './dto/validate-code.dto'
 import { IndividualsService } from './individuals.service'
-import { NotFoundError } from 'rxjs'
 
 @Controller('individuals')
 export class IndividualsController {
@@ -30,51 +29,6 @@ export class IndividualsController {
 
   @Post('send-sms')
   async sendDirectDebitSms(@Body('clientes') clientes: number[]) {
-    const failedPromises: string[] = []
-
-    for (let i = 0; i < clientes.length; i += 50) {
-      const promises: Promise<any>[] = []
-
-      for (let j = 0; j < 50; j++) {
-        const cliente = clientes[i + j]
-
-        if (cliente) {
-          promises.push(this.individualsService.sendSms(cliente))
-        } else {
-          break
-        }
-      }
-
-      const results = await Promise.allSettled(promises)
-      const rejectedResults = results.filter((result) => result.status === 'rejected')
-
-      rejectedResults.forEach((res) => {
-        // @ts-ignore
-        if (res.reason instanceof NotFoundException && res.reason.response?.msg) {
-          // @ts-ignore
-          failedPromises.push(res.reason.response?.msg)
-        }
-      })
-    }
-
-    if (!failedPromises.length) {
-      return {
-        mensaje: {
-          error: false,
-          mensaje: 'SMS enviados correctamente',
-          mostrar: 'TOAST'
-        }
-      }
-    }
-
-    return {
-      mensaje: {
-        error: true,
-        mensaje:
-          'No se pudo enviar el SMS a los siguientes folios. Puede que no exista el celular en el sistema.',
-        mostrar: 'DIALOG',
-        detallemensaje: failedPromises
-      }
-    }
+    return this.individualsService.sendMultipleSms(clientes)
   }
 }

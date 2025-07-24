@@ -73,6 +73,60 @@ export class IndividualsService {
     )
   }
 
+  async sendMultipleSms(clientes: number[]) {
+    const failedPromises: string[] = []
+
+    for (let i = 0; i < clientes.length; i += 50) {
+      const promises: Promise<any>[] = []
+
+      for (let j = 0; j < 50; j++) {
+        const cliente = clientes[i + j]
+
+        if (cliente) {
+          const [smsAlreadySent] = await this.sqlService.query(this.getSolicitudDom, {
+            idPersonaFisica: cliente
+          })
+          if (smsAlreadySent) return
+
+          promises.push(this.sendSms(cliente))
+        } else {
+          break
+        }
+      }
+
+      const results = await Promise.allSettled(promises)
+      const rejectedResults = results.filter((result) => result.status === 'rejected')
+
+      rejectedResults.forEach((res) => {
+        // @ts-ignore
+        if (res.reason instanceof NotFoundException && res.reason.response?.msg) {
+          // @ts-ignore
+          failedPromises.push(res.reason.response?.msg)
+        }
+      })
+    }
+
+    if (!failedPromises.length) {
+      return {
+        mensaje: {
+          error: false,
+          mensaje: 'SMS enviados correctamente',
+          mostrar: 'TOAST'
+        }
+      }
+    }
+
+    return {
+      mensaje: {
+        error: true,
+        mensaje:
+          'No se pudo enviar el SMS a los siguientes folios. Puede que no exista el celular en el sistema.',
+        mostrar: 'DIALOG',
+        detallemensaje: failedPromises
+      }
+    }
+  }
+
   // FIX: this should be an utilitary fn
   async minifyUrl(url: string): Promise<string> {
     try {
