@@ -12,7 +12,7 @@ const gatewayConfig = {
   path: '/dom-bbva/socket.io'
 }
 
-@WebSocketGateway(gatewayConfig)
+@WebSocketGateway()
 export class WebsocketGateway {
   @WebSocketServer()
   server: Server

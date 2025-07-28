@@ -83,11 +83,6 @@ export class IndividualsService {
         const cliente = clientes[i + j]
 
         if (cliente) {
-          // const [smsAlreadySent] = await this.sqlService.query(this.getSolicitudDom, {
-          //   idPersonaFisica: cliente
-          // })
-          // if (smsAlreadySent) return
-
           promises.push(this.sendSms(cliente))
         } else {
           break
@@ -164,6 +159,8 @@ export class IndividualsService {
           code: 'CELLPHONE_NOT_FOUND'
         })
       }
+
+      await this.directDebitsService.createDirectDebit(idPersonaFisica)
 
       const url = await this.minifyUrl(
         `https://dom-bbva.netlify.app/?cliente=${idPersonaFisica}`

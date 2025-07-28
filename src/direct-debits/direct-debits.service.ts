@@ -52,6 +52,7 @@ export class DirectDebitsService {
   private readonly getDirectDebitInfo: string
   private readonly saveSignatureUrl: string
   private readonly getDirectDebits: string
+  private readonly createDirectDebitQuery: string
 
   private readonly digitalSignature = 4202
   private readonly directDebit: number
@@ -151,6 +152,11 @@ export class DirectDebitsService {
 
     this.updatePublicUrlDom = fs.readFileSync(
       path.join(__dirname, 'queries', 'update-public-url-dom.sql'),
+      'utf8'
+    )
+
+    this.createDirectDebitQuery = fs.readFileSync(
+      path.join(__dirname, 'queries', 'create-direct-debit.sql'),
       'utf8'
     )
 
@@ -420,6 +426,10 @@ export class DirectDebitsService {
     }
   }
 
+  createDirectDebit(idPersonaFisica: number) {
+    return this.sqlService.query(this.createDirectDebitQuery, { idPersonaFisica })
+  }
+
   async uploadSignature(
     file: Express.Multer.File,
     { latitude, longitude, idPersonaFisica }: UploadSignatureDto
@@ -477,26 +487,6 @@ export class DirectDebitsService {
       })
 
       const pdfUrls = await Promise.all(promises)
-
-      // const pdfUrl = await this.generateDirectDebitPdf({
-      //   idOrden: +idOrden,
-      //   latitude: +latitude,
-      //   longitude: +longitude
-      // })
-
-      // const codeNameDom = `${idOrden}.${this.directDebit}`
-      // const fileNameDom = `${codeNameDom}.${new Date().getTime()}.pdf`
-      // const keyDom = `${new Date().getFullYear()}/${idOrden}/${fileNameDom}`
-
-      // const queryParamsDom = {
-      //   idOrden,
-      //   publicUrl: pdfUrl,
-      //   idDocumento: this.directDebit,
-      //   nombreArchivo: fileNameDom,
-      //   tamanoArchivo: 0,
-      //   s3Key: keyDom
-      // }
-      // await this.sqlService.query(this.createDocumentoOrden, queryParamsDom)
 
       await this.updateStepByIdPersonaFisica(4, idPersonaFisica)
 

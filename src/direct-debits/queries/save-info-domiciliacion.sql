@@ -1,12 +1,13 @@
 IF EXISTS (
-    SELECT 1
-    FROM dbo.infoDomiciliacion
-    WITH (NOLOCK)
+    SELECT
+        1
+    FROM
+        dbo.infoDomiciliacion WITH (NOLOCK)
     WHERE
         idSolicitudDomiciliacion = @idSolicitudDomiciliacion
-) BEGIN
--- Si existe: actualiza
-UPDATE dbo.infoDomiciliacion
+) BEGIN -- Si existe: actualiza
+UPDATE
+    dbo.infoDomiciliacion
 SET
     nombre1 = @nombre1,
     nombre2 = @nombre2,
@@ -15,8 +16,9 @@ SET
     rfc = @rfc,
     curp = @curp
 WHERE
-    idSolicitudDomiciliacion = @idSolicitudDomiciliacion END ELSE BEGIN
-    -- Si no existe: inserta
+    idSolicitudDomiciliacion = @idSolicitudDomiciliacion
+END
+ELSE BEGIN -- Si no existe: inserta
 INSERT INTO
     dbo.infoDomiciliacion (
         nombre1,
@@ -27,7 +29,8 @@ INSERT INTO
         curp,
         idSolicitudDomiciliacion
     )
-VALUES (
+VALUES
+    (
         @nombre1,
         @nombre2,
         @apellidoPaterno,
@@ -35,4 +38,5 @@ VALUES (
         @rfc,
         @curp,
         @idSolicitudDomiciliacion
-    ) END
+    )
+END
