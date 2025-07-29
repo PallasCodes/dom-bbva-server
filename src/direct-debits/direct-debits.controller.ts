@@ -59,6 +59,11 @@ export class DirectDebitsController {
     return this.directDebitsService.updateStepByIdPersonaFisica(2, idPersonaFisica)
   }
 
+  @Get('restart-process/:cliente')
+  restartProcess(@Param('cliente') cliente: number) {
+    return this.directDebitsService.updateStepByIdPersonaFisica(1, +cliente)
+  }
+
   @Get(':idPersonaFisica')
   get(@Param('idPersonaFisica') idPersonaFisica: number) {
     return this.directDebitsService.getDirectDebitByIdPersonaFisica(idPersonaFisica)
