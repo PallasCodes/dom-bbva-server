@@ -551,8 +551,6 @@ export class DirectDebitsService {
 
   async signDirectDebitDoc(idPersonaFisica: number) {
     try {
-      // await this.getDirectDebitByIdOrden(idOrden)
-      // await this.getDirectDebitByIdPersonaFisica(idOrden)
       const ordenesResult = await this.sqlService.query(this.getDirectDebits, {
         idPersonaFisica,
         idDocumento: this.directDebit

@@ -80,7 +80,6 @@ export class EdicomService {
 
       return uuid
     } catch (err) {
-      this.logger.error(err)
       throw new InternalServerErrorException(
         'Ocurrió un error al subir el archivo a Edicom'
       )
@@ -126,7 +125,7 @@ export class EdicomService {
       return data
     } catch (error) {
       this.logger.error('Error al crear carpeta:', error.message)
-      throw error
+      throw new InternalServerErrorException('Error al crear carpeta')
     }
   }
 
