@@ -6,14 +6,14 @@ Content-Type: application/json
 }
 
 ###
-POST http://localhost:3000/api/direct-debits/toku-webhook
+POST http://localhost:3001/api/direct-debits/toku-webhook
 Content-Type: application/json
 
 {
     "id": "wheve_kexFBYQDxiKDAeWqbuqQY-M7NvHpKAqG",
     "event_type": "bank_account_verification.result",
     "bank_account_verification": {
-        "id_bank_account_verification": "bav_6o1HzuVEV7OagZrpXWPuGUz4SvAW6Y7w",
+        "id_bank_account_verification": "bav_TyAXR2aEvojeV4opUnSJZx3Zk771Ywq6",
         "status": "DONE",
         "validation": "SUCCESS",
         "reason": null,

@@ -2,7 +2,6 @@ SELECT
 	pf.fechaNacimiento,
 	pf.idEntidadFederativaNacimiento,
 	vsd.codigo,
-	sm.folioOrden,
 	sm.idSolicitudDom,
 	pf.idPersonaFisica
 FROM
