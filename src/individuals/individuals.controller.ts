@@ -31,4 +31,9 @@ export class IndividualsController {
   async sendDirectDebitSms(@Body('clientes') clientes: number[]) {
     return this.individualsService.sendMultipleSms(clientes)
   }
+
+  @Post('send-cut-sms')
+  async sendCutSms(@Body('idPersonaFisica') idPersonaFisica: number) {
+    return this.individualsService.sendCutSms(idPersonaFisica)
+  }
 }

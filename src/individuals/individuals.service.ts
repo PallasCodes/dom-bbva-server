@@ -14,6 +14,7 @@ import { ConfigService } from '@nestjs/config'
 import { DirectDebitsService } from 'src/direct-debits/direct-debits.service'
 import { SqlService } from '../database/sql.service'
 import { ValidateCodeDto } from './dto/validate-code.dto'
+import { generateCut } from 'src/utils/generate-cut.util'
 
 @Injectable()
 export class IndividualsService {
@@ -25,6 +26,7 @@ export class IndividualsService {
   private readonly getContactInfoByFolio: string
   private readonly getSolicitudDom
   private readonly getDirectDebitsPdfUrls: string
+  private readonly updateCut: string
 
   private readonly directDebit: number
   private readonly bitlyToken: string
@@ -71,6 +73,35 @@ export class IndividualsService {
       path.join(__dirname, 'queries', 'get-contact-info-by-folio.sql'),
       'utf8'
     )
+    this.updateCut = fs.readFileSync(
+      path.join(__dirname, 'queries', 'update-cut.sql'),
+      'utf8'
+    )
+  }
+
+  async sendCutSms(idPersonaFisica: number) {
+    const [contactInfo] = await this.sqlService.query(this.getContactInfoByFolio, {
+      idTipo: 1302,
+      idPersonaFisica
+    })
+
+    if (!contactInfo || !contactInfo.contacto) {
+      throw new NotFoundException({
+        msg: idPersonaFisica,
+        code: 'CELLPHONE_NOT_FOUND'
+      })
+    }
+
+    const cut = generateCut()
+    const payload = {
+      to: contactInfo.contacto,
+      msg: `Tu código de validación CUT es: ${cut}`
+    }
+
+    await this.sqlService.query(this.updateCut, { idPersonaFisica, cut })
+    await this.sqlService.query('EXEC gbplus.dbo.fn_Sms @to, @msg', payload)
+
+    return { message: 'SMS enviado' }
   }
 
   async sendMultipleSms(clientes: number[]) {
@@ -166,11 +197,11 @@ export class IndividualsService {
         `https://dom-bbva.netlify.app/?cliente=${idPersonaFisica}`
       )
       const payload = {
-        cellphone: contactInfo.contacto,
+        to: contactInfo.contacto,
         msg: `Cambia tu cuenta CLABE para automatizar la domiciliación de tu crédito Intermercado ${url}`
       }
 
-      await this.sqlService.query('EXEC gbplus.dbo.fn_Sms @cellphone, @msg', payload)
+      await this.sqlService.query('EXEC gbplus.dbo.fn_Sms @to, @msg', payload)
 
       return {
         mensaje: {

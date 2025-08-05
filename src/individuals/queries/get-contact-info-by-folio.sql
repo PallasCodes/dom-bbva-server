@@ -3,5 +3,5 @@ SELECT
 FROM
     dbo.personaFisicaContacto pfc WITH (NOLOCK)
 WHERE
-    pfc.idPersonaFisisca = @idPersonaFisica
+    pfc.idPersonaFisica = @idPersonaFisica
     AND pfc.idTipo = @idTipo
