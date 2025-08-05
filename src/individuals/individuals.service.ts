@@ -193,9 +193,7 @@ export class IndividualsService {
 
       await this.directDebitsService.createDirectDebit(idPersonaFisica)
 
-      const url = await this.minifyUrl(
-        `https://dom-bbva.netlify.app/?cliente=${idPersonaFisica}`
-      )
+      const url = `https://actualizacion.intermercado.com.mx/?cliente=${idPersonaFisica}`
       const payload = {
         to: contactInfo.contacto,
         msg: `Cambia tu cuenta CLABE para automatizar la domiciliación de tu crédito Intermercado ${url}`

@@ -9,5 +9,16 @@ IF NOT EXISTS (
 INSERT
   dbo.solicitudDomiciliacion(idPersonaFisica)
 VALUES
-  (@idPersonaFisica)
+  (@idPersonaFisica);
+
+DECLARE @idSolicitudDom INT;
+
+SET
+  @idSolicitudDom = SCOPE_IDENTITY();
+
+INSERT INTO
+  dbo.validacionSolicitudDom(idSolicitudDom)
+VALUES
+  (idSolicitudDom);
+
 END

@@ -13,7 +13,7 @@ Content-Type: application/json
     "id": "wheve_kexFBYQDxiKDAeWqbuqQY-M7NvHpKAqG",
     "event_type": "bank_account_verification.result",
     "bank_account_verification": {
-        "id_bank_account_verification": "bav_TyAXR2aEvojeV4opUnSJZx3Zk771Ywq6",
+        "id_bank_account_verification": "bav_out92i58nAvlprai1yLyCziYmID742rI",
         "status": "DONE",
         "validation": "SUCCESS",
         "reason": null,
