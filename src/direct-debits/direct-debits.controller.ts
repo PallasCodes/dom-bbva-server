@@ -36,7 +36,7 @@ export class DirectDebitsController {
   }
 
   @Post('toku-webhook')
-  tokuWebHookHandler(@Body() dto: TokuWebhookRequestDto) {
+  tokuWebHookHandler(@Body() dto: any) {
     return this.directDebitsService.handleTokuWebhook(dto)
   }
 
