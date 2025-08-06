@@ -19,6 +19,6 @@ SET
 INSERT INTO
   dbo.validacionSolicitudDom(idSolicitudDom)
 VALUES
-  (idSolicitudDom);
+  (@idSolicitudDom);
 
 END
