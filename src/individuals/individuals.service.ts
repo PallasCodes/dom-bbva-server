@@ -196,15 +196,13 @@ export class IndividualsService {
       const url = `https://actualizacion.intermercado.com.mx/?cliente=${idPersonaFisica}`
       const payload = {
         to: contactInfo.contacto,
-        msg: `Cambia tu cuenta CLABE para automatizar la domiciliación de tu crédito Intermercado ${url}`
+        msg: `Actualiza tus datos aquí: ${url} y sigue disfrutando de todos los beneficios exclusivos que Intermercado tiene para ti.`
       }
-      console.log('🚀 ~ IndividualsService ~ sendSms ~ payload:', payload)
 
       const result = await this.sqlService.query(
         'EXEC gbplus.dbo.fn_Sms @to, @msg',
         payload
       )
-      console.log('🚀 ~ IndividualsService ~ sendSms ~ result:', result)
 
       return {
         mensaje: {
