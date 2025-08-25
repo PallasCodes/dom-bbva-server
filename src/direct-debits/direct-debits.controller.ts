@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   Body,
   Controller,
   Get,
@@ -12,7 +11,6 @@ import { FileInterceptor } from '@nestjs/platform-express'
 
 import { DirectDebitsService } from './direct-debits.service'
 import { SaveDirectDebitDto } from './dto/save-direct-debit.dto'
-import { TokuWebhookRequestDto } from './dto/toku-webhook-request.dto'
 import { UploadSignatureDto } from './dto/upload-signature-dto'
 import { ValidateClabeDto } from './dto/validate-clabe.dto'
 
@@ -56,7 +54,7 @@ export class DirectDebitsController {
 
   @Post('validate-loan/:idPersonaFisica')
   validateLoan(@Param('idPersonaFisica') idPersonaFisica: number) {
-    return this.directDebitsService.updateStepByIdPersonaFisica(2, idPersonaFisica)
+    return this.directDebitsService.validateLoan(idPersonaFisica)
   }
 
   @Get('restart-process/:cliente')

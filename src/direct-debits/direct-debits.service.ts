@@ -53,6 +53,7 @@ export class DirectDebitsService {
   private readonly saveSignatureUrl: string
   private readonly getDirectDebits: string
   private readonly createDirectDebitQuery: string
+  private readonly registerFoliosDirectdebit: string
 
   private readonly digitalSignature = 4202
   private readonly directDebit: number
@@ -160,6 +161,11 @@ export class DirectDebitsService {
       'utf8'
     )
 
+    this.registerFoliosDirectdebit = fs.readFileSync(
+      path.join(__dirname, 'queries', 'register-folios-direct-debit.sql'),
+      'utf8'
+    )
+
     this.s3 = new S3Client({
       region: configService.get('AWS_REGION') as string,
       credentials: {
@@ -169,6 +175,22 @@ export class DirectDebitsService {
     })
 
     this.bucket = configService.get('AWS_S3_BUCKET') as string
+  }
+
+  async validateLoan(idPersonaFisica: number) {
+    const ordenesResult = await this.sqlService.query(this.getDirectDebits, {
+      idPersonaFisica,
+      idDocumento: this.directDebit
+    })
+
+    await this.sqlService.query(this.registerFoliosDirectdebit, {
+      idPersonaFisica,
+      folios: ordenesResult.map((o) => o.folioInterno).join(',')
+    })
+
+    await this.updateStepByIdPersonaFisica(2, idPersonaFisica)
+
+    return { ok: true }
   }
 
   async getDirectDebitByIdPersonaFisica(idPersonaFisica: number) {
