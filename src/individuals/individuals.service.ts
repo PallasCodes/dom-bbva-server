@@ -92,8 +92,10 @@ export class IndividualsService {
     })
 
     if (!contactInfo || !contactInfo.contacto) {
+      const { nombre1, nombre2, apellidoPaterno, apellidoMaterno, rfc } = contactInfo
+
       throw new NotFoundException({
-        msg: idPersonaFisica,
+        msg: `${nombre1}${nombre2 ? nombre2 : ''} ${apellidoPaterno} ${apellidoMaterno} - ${rfc}`,
         code: 'CELLPHONE_NOT_FOUND'
       })
     }
@@ -291,8 +293,10 @@ export class IndividualsService {
       })
 
       if (!folio) {
+        const { nombre1, nombre2, apellidoPaterno, apellidoMaterno, rfc } = contactInfo
+
         throw new BadRequestException({
-          msg: idPersonaFisica,
+          msg: `${nombre1}${nombre2 ? nombre2 : ''} ${apellidoPaterno} ${apellidoMaterno} - ${rfc}`,
           code: 'CELLPHONE_NOT_FOUND'
         })
       }
