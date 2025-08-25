@@ -359,8 +359,8 @@ export class DirectDebitsService {
       clabeIntroducida: toku.account_number,
       clabeReal: voucher.account_number,
       rfcReal: voucher.customer_identifier,
-      institucionBancaria: voucher.receiver_name,
-      nombreCompleto: voucher.receiver_institution,
+      institucionBancaria: voucher.receiver_institution,
+      nombreCompleto: voucher.receiver_name,
       validacion: toku.validation,
       status: toku.status,
       idEvento: toku.id_bank_account_verification
