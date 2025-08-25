@@ -2,6 +2,7 @@ import * as fs from 'fs'
 import * as path from 'path'
 
 import {
+  BadRequestException,
   forwardRef,
   Inject,
   Injectable,
@@ -27,6 +28,7 @@ export class IndividualsService {
   private readonly getSolicitudDom
   private readonly getDirectDebitsPdfUrls: string
   private readonly updateCut: string
+  private readonly validateDirectDebit: string
 
   private readonly directDebit: number
   private readonly bitlyToken: string
@@ -75,6 +77,10 @@ export class IndividualsService {
     )
     this.updateCut = fs.readFileSync(
       path.join(__dirname, 'queries', 'update-cut.sql'),
+      'utf8'
+    )
+    this.validateDirectDebit = fs.readFileSync(
+      path.join(__dirname, 'queries', 'validate-direct-debit.sql'),
       'utf8'
     )
   }
@@ -153,6 +159,59 @@ export class IndividualsService {
     }
   }
 
+  async sendMultipleSecureSms(clientes: number[]) {
+    const failedPromises: string[] = []
+
+    for (let i = 0; i < clientes.length; i += 50) {
+      const promises: Promise<any>[] = []
+
+      for (let j = 0; j < 50; j++) {
+        const cliente = clientes[i + j]
+
+        if (cliente) {
+          promises.push(this.sendSecureSms(cliente))
+        } else {
+          break
+        }
+      }
+
+      const results = await Promise.allSettled(promises)
+      const rejectedResults = results.filter((result) => result.status === 'rejected')
+
+      rejectedResults.forEach((res) => {
+        if (
+          (res.reason instanceof NotFoundException ||
+            res.reason instanceof BadRequestException) &&
+          // @ts-ignore
+          res.reason.response?.msg
+        ) {
+          // @ts-ignore
+          failedPromises.push(res.reason.response?.msg)
+        }
+      })
+    }
+
+    if (!failedPromises.length) {
+      return {
+        mensaje: {
+          error: false,
+          mensaje: 'SMS enviados correctamente',
+          mostrar: 'TOAST'
+        }
+      }
+    }
+
+    return {
+      mensaje: {
+        error: true,
+        mensaje:
+          'No se pudo enviar el SMS a las siguientes personas. Puede que no exista el celular en el sistema o que no cuente con un folio valido para domiciliación.',
+        mostrar: 'DIALOG',
+        detallemensaje: failedPromises
+      }
+    }
+  }
+
   // FIX: this should be an utilitary fn
   async minifyUrl(url: string): Promise<string> {
     try {
@@ -199,10 +258,54 @@ export class IndividualsService {
         msg: `Actualiza tus datos aquí: ${url} y sigue disfrutando de todos los beneficios exclusivos que Intermercado tiene para ti.`
       }
 
-      const result = await this.sqlService.query(
-        'EXEC gbplus.dbo.fn_Sms @to, @msg',
-        payload
-      )
+      await this.sqlService.query('EXEC gbplus.dbo.fn_Sms @to, @msg', payload)
+
+      return {
+        mensaje: {
+          error: false,
+          mensaje: 'SMS enviado correctamente',
+          mostrar: 'TOAST'
+        }
+      }
+    } catch (err) {
+      throw err
+    }
+  }
+
+  async sendSecureSms(idPersonaFisica: number) {
+    try {
+      const [contactInfo] = await this.sqlService.query(this.getContactInfoByFolio, {
+        idTipo: 1302,
+        idPersonaFisica
+      })
+
+      if (!contactInfo || !contactInfo.contacto) {
+        throw new NotFoundException({
+          msg: idPersonaFisica,
+          code: 'CELLPHONE_NOT_FOUND'
+        })
+      }
+
+      const [folio] = await this.sqlService.query(this.validateDirectDebit, {
+        idPersonaFisica
+      })
+
+      if (!folio) {
+        throw new BadRequestException({
+          msg: idPersonaFisica,
+          code: 'CELLPHONE_NOT_FOUND'
+        })
+      }
+
+      await this.directDebitsService.createDirectDebit(idPersonaFisica)
+
+      const url = `https://actualizacion.intermercado.com.mx/?cliente=${idPersonaFisica}`
+      const payload = {
+        to: contactInfo.contacto,
+        msg: `Actualiza tus datos aquí: ${url} y sigue disfrutando de todos los beneficios exclusivos que Intermercado tiene para ti.`
+      }
+
+      await this.sqlService.query('EXEC gbplus.dbo.fn_Sms @to, @msg', payload)
 
       return {
         mensaje: {

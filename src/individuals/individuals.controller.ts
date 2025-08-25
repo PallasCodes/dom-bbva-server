@@ -36,4 +36,9 @@ export class IndividualsController {
   async sendCutSms(@Body('idPersonaFisica') idPersonaFisica: number) {
     return this.individualsService.sendCutSms(idPersonaFisica)
   }
+
+  @Post('send-secure-sms')
+  async sendSecureSms(@Body('clientes') clientes: number[]) {
+    return this.individualsService.sendMultipleSecureSms(clientes)
+  }
 }
