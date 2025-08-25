@@ -28,8 +28,11 @@ export class IndividualsController {
   }
 
   @Post('send-sms')
-  async sendDirectDebitSms(@Body('clientes') clientes: number[]) {
-    return this.individualsService.sendMultipleSms(clientes)
+  async sendDirectDebitSms(
+    @Body('clientes') clientes: number[],
+    @Body('idUsuarioV3') idUsuarioV3: number
+  ) {
+    return this.individualsService.sendMultipleSms(clientes, idUsuarioV3)
   }
 
   @Post('send-cut-sms')
@@ -38,7 +41,10 @@ export class IndividualsController {
   }
 
   @Post('send-secure-sms')
-  async sendSecureSms(@Body('clientes') clientes: number[]) {
-    return this.individualsService.sendMultipleSecureSms(clientes)
+  async sendSecureSms(
+    @Body('clientes') clientes: number[],
+    @Body('idUsuarioV3') idUsuarioV3: number
+  ) {
+    return this.individualsService.sendMultipleSecureSms(clientes, idUsuarioV3)
   }
 }

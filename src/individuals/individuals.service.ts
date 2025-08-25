@@ -112,7 +112,7 @@ export class IndividualsService {
     return { message: 'SMS enviado' }
   }
 
-  async sendMultipleSms(clientes: number[]) {
+  async sendMultipleSms(clientes: number[], idUsuarioV3: number) {
     const failedPromises: string[] = []
 
     for (let i = 0; i < clientes.length; i += 50) {
@@ -122,7 +122,7 @@ export class IndividualsService {
         const cliente = clientes[i + j]
 
         if (cliente) {
-          promises.push(this.sendSms(cliente))
+          promises.push(this.sendSms(cliente, idUsuarioV3))
         } else {
           break
         }
@@ -161,7 +161,7 @@ export class IndividualsService {
     }
   }
 
-  async sendMultipleSecureSms(clientes: number[]) {
+  async sendMultipleSecureSms(clientes: number[], idUsuarioV3: number) {
     const failedPromises: string[] = []
 
     for (let i = 0; i < clientes.length; i += 50) {
@@ -171,7 +171,7 @@ export class IndividualsService {
         const cliente = clientes[i + j]
 
         if (cliente) {
-          promises.push(this.sendSecureSms(cliente))
+          promises.push(this.sendSecureSms(cliente, idUsuarioV3))
         } else {
           break
         }
@@ -238,7 +238,7 @@ export class IndividualsService {
     }
   }
 
-  async sendSms(idPersonaFisica: number) {
+  async sendSms(idPersonaFisica: number, idUsuarioV3: number) {
     try {
       const [contactInfo] = await this.sqlService.query(this.getContactInfoByFolio, {
         idTipo: 1302,
@@ -252,7 +252,7 @@ export class IndividualsService {
         })
       }
 
-      await this.directDebitsService.createDirectDebit(idPersonaFisica)
+      await this.directDebitsService.createDirectDebit(idPersonaFisica, idUsuarioV3)
 
       const url = `https://actualizacion.intermercado.com.mx/?cliente=${idPersonaFisica}`
       const payload = {
@@ -274,7 +274,7 @@ export class IndividualsService {
     }
   }
 
-  async sendSecureSms(idPersonaFisica: number) {
+  async sendSecureSms(idPersonaFisica: number, idUsuarioV3: number) {
     try {
       const [contactInfo] = await this.sqlService.query(this.getContactInfoByFolio, {
         idTipo: 1302,
@@ -301,7 +301,7 @@ export class IndividualsService {
         })
       }
 
-      await this.directDebitsService.createDirectDebit(idPersonaFisica)
+      await this.directDebitsService.createDirectDebit(idPersonaFisica, idUsuarioV3)
 
       const url = `https://actualizacion.intermercado.com.mx/?cliente=${idPersonaFisica}`
       const payload = {

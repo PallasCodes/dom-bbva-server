@@ -448,8 +448,11 @@ export class DirectDebitsService {
     }
   }
 
-  createDirectDebit(idPersonaFisica: number) {
-    return this.sqlService.query(this.createDirectDebitQuery, { idPersonaFisica })
+  createDirectDebit(idPersonaFisica: number, idUsuarioV3: number) {
+    return this.sqlService.query(this.createDirectDebitQuery, {
+      idPersonaFisica,
+      idUsuarioV3
+    })
   }
 
   async uploadSignature(

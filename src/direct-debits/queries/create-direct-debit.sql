@@ -1,15 +1,27 @@
-IF NOT EXISTS (
+IF EXISTS (
   SELECT
     1
   FROM
     dbo.solicitudDomiciliacion WITH (NOLOCK)
   WHERE
-    idPersonaFisica = @idPErsonaFisica
+    idPersonaFisica = @idPersonaFisica
 ) BEGIN
-INSERT
-  dbo.solicitudDomiciliacion(idPersonaFisica)
+UPDATE
+  solDom
+SET
+  solDom.tiempoEnvioSms = GETDATE(),
+  solDom.idUsuarioEnvioSms = @idUsuarioEnvioSms
+FROM
+  dbo.solicitudDom solDom
+WHERE
+  solDom.idPersonaFisica = @idPersonaFisica;
+
+END
+ELSE BEGIN
+INSERT INTO
+  dbo.solicitudDomiciliacion (idPersonaFisica, idUsuarioEnvioSms)
 VALUES
-  (@idPersonaFisica);
+  (@idPersonaFisica, @idUsuarioV3);
 
 DECLARE @idSolicitudDom INT;
 
@@ -17,7 +29,7 @@ SET
   @idSolicitudDom = SCOPE_IDENTITY();
 
 INSERT INTO
-  dbo.validacionSolicitudDom(idSolicitudDom)
+  dbo.validacionSolicitudDom (idSolicitudDom)
 VALUES
   (@idSolicitudDom);
 
