@@ -12,7 +12,7 @@ SET
   solDom.tiempoEnvioSms = GETDATE(),
   solDom.idUsuarioEnvioSms = @idUsuarioV3
 FROM
-  dbo.solicitudDom solDom
+  dbo.solicitudDomiciliacion solDom
 WHERE
   solDom.idPersonaFisica = @idPersonaFisica;
 
