@@ -10,7 +10,7 @@ UPDATE
   solDom
 SET
   solDom.tiempoEnvioSms = GETDATE(),
-  solDom.idUsuarioEnvioSms = @idUsuarioEnvioSms
+  solDom.idUsuarioEnvioSms = @idUsuarioV3
 FROM
   dbo.solicitudDom solDom
 WHERE
