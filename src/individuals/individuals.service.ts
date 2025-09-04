@@ -118,7 +118,7 @@ export class IndividualsService {
     for (let i = 0; i < clientes.length; i += 50) {
       const promises: Promise<any>[] = []
 
-      for (let j = 0; j < 50; j++) {
+      for (let j = 0; j < 10; j++) {
         const cliente = clientes[i + j]
 
         if (cliente) {
